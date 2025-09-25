@@ -6,10 +6,10 @@ import BookingModal from './BookingModal';
 import QuoteModal from './QuoteModal';
 
 const iconMap = {
-  Building,
-  Server,
-  Code,
-  Briefcase,
+  'Building': Building,
+  'Server': Server,
+  'Code': Code,
+  'Briefcase': Briefcase,
 };
 
 const Services = () => {
@@ -49,7 +49,7 @@ const Services = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {DEMO_SERVICES.map((service, index) => {
-            const IconComponent = iconMap[service.icon];
+            const IconComponent = iconMap[service.icon] || Building; // Fallback to Building if icon not found
 
             return (
               <div key={service.id} className="group relative bg-white rounded-2xl overflow-hidden shadow-sm border border-neutral-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
