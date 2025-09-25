@@ -1,2 +1,7 @@
 node_modules
 .vercel
+# macOS system files
+.DS_Store
+public/.DS_Store
+public/images/.DS_Store
+public/images/logo/.DS_Store
