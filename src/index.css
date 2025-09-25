@@ -12,23 +12,23 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transform hover:scale-105 hover:shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-white hover:bg-neutral-50 text-primary-600 border border-primary-200 font-medium px-6 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply bg-white hover:bg-neutral-50 text-primary-600 border border-primary-200 font-medium px-6 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 hover:shadow-md;
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-neutral-200 p-6 hover:shadow-md transition-shadow duration-200;
+    @apply bg-white rounded-xl shadow-sm border border-neutral-200 p-6 hover:shadow-md transition-all duration-200;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200;
+    @apply w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
   }
 
   .modal-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm;
   }
 
   .modal-content {
@@ -54,7 +54,44 @@
     background-clip: text;
   }
 
-  /* Animation classes for Hero component */
+  /* Enhanced Design System */
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent;
+  }
+
+  .feature-card {
+    @apply relative overflow-hidden rounded-2xl bg-gradient-to-br from-white to-neutral-50 border border-neutral-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/80 border border-white/20 shadow-xl;
+  }
+
+  .floating-element {
+    @apply absolute opacity-20 animate-float;
+  }
+
+  .gradient-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-primary-600/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300;
+  }
+
+  .enhanced-card {
+    @apply relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border border-neutral-100;
+  }
+
+  .price-badge {
+    @apply absolute top-4 right-4 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg;
+  }
+
+  .loading-skeleton {
+    @apply animate-pulse bg-neutral-200 h-48 rounded-lg mb-4;
+  }
+
+  .skeleton-text {
+    @apply animate-pulse bg-neutral-200 h-4 rounded;
+  }
+
+  /* Advanced Animations */
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
@@ -63,10 +100,143 @@
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-15px); }
   }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.6); }
+  }
+  @keyframes slide-in {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
   .animate-float-delayed {
     animation: float-delayed 3s ease-in-out infinite 1.5s;
   }
-} 
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  .animate-slide-in {
+    animation: slide-in 0.5s ease-out;
+  }
+
+  /* Enhanced Button Styles */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  }
+
+  .btn-glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300 hover:bg-white/20 hover:shadow-lg;
+  }
+
+  .btn-glass-enhanced {
+    @apply bg-white/25 backdrop-blur-md border-2 border-white/60 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:bg-white/35 hover:shadow-2xl hover:border-white/80 hover:scale-105;
+  }
+
+  .btn-glass-premium {
+    @apply bg-gradient-to-r from-blue-600/90 to-blue-700/90 backdrop-blur-md border-2 border-blue-400/70 text-white font-bold px-10 py-5 rounded-2xl transition-all duration-300 hover:from-blue-500/95 hover:to-blue-600/95 hover:shadow-2xl hover:border-blue-300/90 hover:scale-105;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  }
+
+  .btn-glass-premium:hover {
+    box-shadow: 0 12px 40px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+
+  .btn-glass-accent {
+    @apply bg-gradient-to-r from-purple-600/90 to-indigo-600/90 backdrop-blur-md border-2 border-purple-400/70 text-white font-bold px-10 py-5 rounded-2xl transition-all duration-300 hover:from-purple-500/95 hover:to-indigo-500/95 hover:shadow-2xl hover:border-purple-300/90 hover:scale-105;
+    box-shadow: 0 8px 32px rgba(147, 51, 234, 0.4);
+  }
+
+  .btn-glass-accent:hover {
+    box-shadow: 0 12px 40px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.5);
+  }
+
+  .btn-glass-vibrant {
+    @apply bg-gradient-to-r from-orange-500/90 to-red-500/90 backdrop-blur-md border-2 border-orange-400/70 text-white font-bold px-10 py-5 rounded-2xl transition-all duration-300 hover:from-orange-400/95 hover:to-red-400/95 hover:shadow-2xl hover:border-orange-300/90 hover:scale-105;
+    box-shadow: 0 8px 32px rgba(249, 115, 22, 0.4);
+  }
+
+  .btn-glass-vibrant:hover {
+    box-shadow: 0 12px 40px rgba(249, 115, 22, 0.6), 0 0 30px rgba(249, 115, 22, 0.5);
+  }
+
+  .btn-glass-emerald {
+    @apply bg-gradient-to-r from-emerald-500/90 to-teal-500/90 backdrop-blur-md border-2 border-emerald-400/70 text-white font-bold px-10 py-5 rounded-2xl transition-all duration-300 hover:from-emerald-400/95 hover:to-teal-400/95 hover:shadow-2xl hover:border-emerald-300/90 hover:scale-105;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+  }
+
+  /* Image Loading Optimization */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  /* Portfolio Image Enhancements */
+  .portfolio-image {
+    @apply transition-all duration-300;
+  }
+
+  .portfolio-image:hover {
+    @apply transform scale-105;
+  }
+
+  /* Lightbox Image Optimization */
+  .lightbox-image {
+    @apply max-w-full max-h-full object-contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  /* Thumbnail Loading States */
+  .thumbnail-loading {
+    @apply bg-neutral-200 animate-pulse;
+  }
+
+  /* Typography Enhancements */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+  }
+
+  /* Layout Enhancements */
+  .container-enhanced {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .grid-enhanced {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  /* Interactive Elements */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/25;
+  }
+
+  /* Enhanced Header Styling */
+  .logo-enhanced {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  }
+
+  .company-name-premium {
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .company-name-bold {
+    font-weight: 900;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

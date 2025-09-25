@@ -88,7 +88,10 @@ export const DEMO_PROJECTS = [
     gallery: [
       '/images/portfolio/rokaProject-delivery.webp',
       '/images/portfolio/rokaTableWater.webp',
-      '/images/portfolio/roka1.webp'
+      '/images/portfolio/roka1.webp',
+      '/images/portfolio/roka.webp',
+      '/images/portfolio/rokaProject-delivery.HEIC',
+      '/images/portfolio/rokaTableWater.HEIC'
     ],
     technologies: ['Branding', 'Supply Chain Management', 'Business Systems'],
     completionDate: '2025',
@@ -103,7 +106,8 @@ export const DEMO_PROJECTS = [
     gallery: [
       '/images/portfolio/poshpoulefarms.webp',
       '/images/portfolio/poshpoulefarm2.webp',
-      '/images/portfolio/organicFarm.webp'
+      '/images/portfolio/poshpoulefarms.HEIC',
+      '/images/portfolio/poshpoulefarm2.HEIC'
     ],
     technologies: ['AgriTech', 'Organic Systems', 'Farm Management Software'],
     completionDate: '2019',
@@ -116,9 +120,9 @@ export const DEMO_PROJECTS = [
     description: 'Designed and tested a lightweight ERP dashboard to manage leads, proposals, and project workflows internally at CEOTR Ltd.',
     image: '/images/portfolio/project-2-main.png',
     gallery: [
-      '/images/portfolio/it-services.png',
+      '/images/services/it-services.png',
       '/images/portfolio/project-1-main.png',
-      '/images/portfolio/software-development.png'
+      '/images/services/software-development.png'
     ],
     technologies: ['React', 'Node.js', 'Tailwind', 'PostgreSQL'],
     completionDate: '2024',
@@ -132,13 +136,29 @@ export const DEMO_PROJECTS = [
     image: '/images/portfolio/JesusPowerArenaProject.PNG',
     gallery: [
       '/images/portfolio/JesusPowerArena.webp',
-      '/images/portfolio/JepliggomProject.webp'
+      '/images/portfolio/JepliggomProject.webp',
+      '/images/portfolio/JesusPowerArena.HEIC',
+      '/images/portfolio/JepliggomProject.HEIC'
     ],
     technologies: ['Modern Architecture', 'Sustainable Building', 'Community Facilities'],
     completionDate: '2023',
     client: 'Jesus Power Arena Ministry',
     type: 'construction'
-  }
+  },
+  {
+    id: 'organic-farm-project',
+    title: 'Organic Farm Technology Integration',
+    description: 'Implemented modern farming technology and sustainable practices for an organic farm operation.',
+    image: '/images/portfolio/organicFarm.webp',
+    gallery: [
+      '/images/portfolio/organicFarm.webp',
+      '/images/portfolio/organicFarm.HEIC'
+    ],
+    technologies: ['AgriTech', 'Sustainable Farming', 'IoT Monitoring'],
+    completionDate: '2024',
+    client: 'Green Valley Organics',
+    type: 'it'
+  },
 ];
 
 export const DEMO_TEAM = [

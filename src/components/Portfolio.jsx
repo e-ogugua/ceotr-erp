@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { ExternalLink, Calendar } from 'lucide-react';
+import { ExternalLink, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DEMO_PROJECTS } from '../data/demoServices';
 
 const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const categories = [
     { id: 'all', label: 'All Projects' },
@@ -16,6 +18,32 @@ const Portfolio = () => {
   const filteredProjects = selectedCategory === 'all'
     ? DEMO_PROJECTS
     : DEMO_PROJECTS.filter(project => project.type === selectedCategory);
+
+  const openLightbox = (project, imageIndex) => {
+    setSelectedProject(project);
+    setCurrentImageIndex(imageIndex);
+  };
+
+  const closeLightbox = () => {
+    setSelectedProject(null);
+    setCurrentImageIndex(0);
+  };
+
+  const nextImage = () => {
+    if (selectedProject) {
+      setCurrentImageIndex((prev) =>
+        prev === selectedProject.gallery.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedProject) {
+      setCurrentImageIndex((prev) =>
+        prev === 0 ? selectedProject.gallery.length - 1 : prev - 1
+      );
+    }
+  };
 
   return (
     <section id="portfolio" className="py-16 md:py-24 bg-white">
@@ -50,23 +78,70 @@ const Portfolio = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {filteredProjects.map((project) => (
             <div key={project.id} className="card group overflow-hidden">
-              {/* Project Image */}
+              {/* Project Image Gallery */}
               <div className="relative overflow-hidden rounded-lg mb-6">
-                <div className="aspect-video bg-neutral-200 flex items-center justify-center">
+                <div className="aspect-video bg-neutral-200 flex items-center justify-center relative">
+                  {/* Main Image */}
                   <img
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => openLightbox(project, 0)}
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.innerHTML = '<span class="text-neutral-400 text-sm">Project Image</span>';
+                      // Try WebP fallback for HEIC images
+                      if (project.image.includes('.HEIC') && !e.target.src.includes('.webp')) {
+                        const webpPath = project.image.replace('.HEIC', '.webp');
+                        e.target.src = webpPath;
+                      } else {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-neutral-400 text-sm">Project Image</span>';
+                      }
                     }}
                   />
-                </div>
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                  <button className="opacity-0 group-hover:opacity-100 bg-white text-neutral-900 p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    <ExternalLink size={20} />
-                  </button>
+
+                  {/* Gallery Thumbnails */}
+                  {project.gallery && project.gallery.length > 1 && (
+                    <div className="absolute bottom-2 left-2 right-2 flex gap-1 overflow-x-auto">
+                      {project.gallery.slice(0, 4).map((image, index) => (
+                        <div
+                          key={index}
+                          className="w-12 h-12 bg-neutral-200 rounded cursor-pointer flex-shrink-0"
+                          onClick={() => openLightbox(project, index)}
+                        >
+                          <img
+                            src={image}
+                            alt={`${project.title} ${index + 1}`}
+                            className="w-full h-full object-cover rounded"
+                            onError={(e) => {
+                              // Try WebP fallback for HEIC images
+                              if (image.includes('.HEIC') && !e.target.src.includes('.webp')) {
+                                const webpPath = image.replace('.HEIC', '.webp');
+                                e.target.src = webpPath;
+                              } else {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.innerHTML = '<div class="w-full h-full bg-neutral-300 rounded flex items-center justify-center text-xs text-neutral-500">IMG</div>';
+                              }
+                            }}
+                          />
+                        </div>
+                      ))}
+                      {project.gallery.length > 4 && (
+                        <div className="w-12 h-12 bg-black/50 rounded flex items-center justify-center text-white text-xs font-bold">
+                          +{project.gallery.length - 4}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                    <button
+                      onClick={() => openLightbox(project, 0)}
+                      className="opacity-0 group-hover:opacity-100 bg-white text-neutral-900 p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+                    >
+                      <ExternalLink size={20} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -111,6 +186,61 @@ const Portfolio = () => {
             </div>
           ))}
         </div>
+
+        {/* Lightbox Modal */}
+        {selectedProject && (
+          <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+            <div className="relative max-w-4xl max-h-full">
+              {/* Close Button */}
+              <button
+                onClick={closeLightbox}
+                className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all"
+              >
+                <X size={24} />
+              </button>
+
+              {/* Navigation Buttons */}
+              {selectedProject.gallery && selectedProject.gallery.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-75 transition-all"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-75 transition-all"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
+
+              {/* Main Image */}
+              <img
+                src={selectedProject.gallery[currentImageIndex]}
+                alt={`${selectedProject.title} - Image ${currentImageIndex + 1}`}
+                className="max-w-full max-h-full object-contain rounded-lg"
+                onError={(e) => {
+                  // Try WebP fallback for HEIC images in lightbox
+                  if (e.target.src.includes('.HEIC') && !e.target.src.includes('.webp')) {
+                    const webpPath = e.target.src.replace('.HEIC', '.webp');
+                    e.target.src = webpPath;
+                  } else {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = '<div class="max-w-full max-h-full bg-neutral-200 rounded-lg flex items-center justify-center text-neutral-500 text-lg">Image not available</div>';
+                  }
+                }}
+              />
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 px-3 py-1 rounded-full text-sm">
+                {currentImageIndex + 1} / {selectedProject.gallery.length}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="text-center mt-12">
