@@ -67,10 +67,58 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Our Services</h4>
             <ul className="space-y-2 text-neutral-300">
-              <li>General Contracting</li>
-              <li>IT Solutions</li>
-              <li>Business Consulting</li>
-              <li>Software Development</li>
+              <li>
+                <button
+                  onClick={() => {
+                    const servicesSection = document.getElementById('services');
+                    if (servicesSection) {
+                      servicesSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="hover:text-primary-400 transition-colors text-left w-full"
+                >
+                  General Contracting
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    const servicesSection = document.getElementById('services');
+                    if (servicesSection) {
+                      servicesSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="hover:text-primary-400 transition-colors text-left w-full"
+                >
+                  IT Solutions
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    const servicesSection = document.getElementById('services');
+                    if (servicesSection) {
+                      servicesSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="hover:text-primary-400 transition-colors text-left w-full"
+                >
+                  Business Consulting
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    const servicesSection = document.getElementById('services');
+                    if (servicesSection) {
+                      servicesSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="hover:text-primary-400 transition-colors text-left w-full"
+                >
+                  Software Development
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -83,9 +131,9 @@ const Footer = () => {
               </p>
             </div>
             <div className="flex flex-wrap gap-6 justify-end text-sm text-neutral-400">
-              <a href="#" className="hover:text-primary-400 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-primary-400 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-primary-400 transition-colors">Cookie Policy</a>
+              <a href="/privacy-policy" className="hover:text-primary-400 transition-colors">Privacy Policy</a>
+              <a href="/terms-of-service" className="hover:text-primary-400 transition-colors">Terms of Service</a>
+              <a href="/cookie-policy" className="hover:text-primary-400 transition-colors">Cookie Policy</a>
             </div>
           </div>
         </div>
