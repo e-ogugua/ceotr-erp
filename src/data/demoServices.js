@@ -159,6 +159,51 @@ export const DEMO_PROJECTS = [
     client: 'Green Valley Organics',
     type: 'it'
   },
+  {
+    id: 'igwe-palace',
+    title: 'Construction and Beautification of the Igwe Nneyi\'s Palace, Umueri',
+    description: 'Comprehensive construction and beautification project for the historic Igwe Nneyi\'s Palace, preserving cultural heritage while incorporating modern amenities and infrastructure.',
+    image: '/images/portfolio/projectIgwe1.JPG',
+    gallery: [
+      '/images/portfolio/projectIgwe1.JPG',
+      '/images/portfolio/projectIgwe2.JPG',
+      '/images/portfolio/projectIgwe3.JPG'
+    ],
+    technologies: ['Heritage Conservation', 'Modern Architecture', 'Landscaping'],
+    completionDate: '2023',
+    client: 'Igwe Nneyi Royal Family',
+    type: 'construction'
+  },
+  {
+    id: 'mgbo-school-construction',
+    title: 'Construction of School Classrooms and Facilities, Girls\' High School Mgbo, Awgu, Enugu State',
+    description: 'Built and furnished modern classroom blocks and educational facilities to enhance learning conditions and accommodate more students at Girls\' High School Mgbo.',
+    image: '/images/portfolio/projectSchool1.JPG',
+    gallery: [
+      '/images/portfolio/projectSchool1.JPG',
+      '/images/portfolio/projectSchool2.JPG',
+      '/images/portfolio/projectSchool3.JPG'
+    ],
+    technologies: ['Educational Infrastructure', 'Modern Construction', 'Facility Planning'],
+    completionDate: '2024',
+    client: 'Enugu State Government',
+    type: 'construction'
+  },
+  {
+    id: 'emmanuel-os-apps',
+    title: 'EmmanuelOS – My Journey to 1,000 Apps and 10,000 Hours',
+    description: 'A personal development project documenting the journey of building 1,000 applications and accumulating 10,000 hours of coding experience, showcasing skills across multiple technologies and platforms.',
+    image: '/images/portfolio/EmmanuelOSApps1.png',
+    gallery: [
+      '/images/portfolio/EmmanuelOSApps1.png',
+      '/images/portfolio/EmmanuelOSApps2.png',
+      '/images/portfolio/EmmanuelOSApps3.png'
+    ],
+    technologies: ['Full-Stack Development', 'Mobile Apps', 'Web Applications', 'Cloud Computing'],
+    completionDate: '2025',
+    client: 'Personal Project',
+    type: 'software'
+  },
 ];
 
 export const DEMO_TEAM = [
