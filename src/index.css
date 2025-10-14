@@ -12,11 +12,19 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transform hover:scale-105 hover:shadow-lg min-h-[44px];
+    @apply bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transform hover:scale-105 hover:shadow-lg min-h-[44px] shadow-md;
   }
 
   .btn-secondary {
-    @apply bg-white hover:bg-neutral-50 text-primary-600 border border-primary-200 font-medium px-6 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 hover:shadow-md min-h-[44px];
+    @apply bg-white hover:bg-primary-50 text-primary-600 border-2 border-primary-200 hover:border-primary-300 font-medium px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 hover:shadow-lg min-h-[44px] shadow-sm;
+  }
+
+  .btn-glass {
+    @apply bg-white/80 backdrop-blur-md hover:bg-white/90 text-neutral-700 border border-white/20 hover:border-white/40 font-medium px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 min-h-[44px] shadow-lg hover:shadow-xl;
+  }
+
+  .btn-outline {
+    @apply bg-transparent hover:bg-primary-50 text-primary-600 border-2 border-primary-300 hover:border-primary-400 font-medium px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px] hover:shadow-md;
   }
 
   .card {

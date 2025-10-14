@@ -98,7 +98,7 @@ const Hero = () => {
               </button>
               <button
                 onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
-                className="btn-glass-vibrant"
+                className="btn-glass"
               >
                 <Zap size={20} className="mr-2" />
                 View Our Work
