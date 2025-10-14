@@ -34,7 +34,7 @@ const Hero = () => {
             className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-2000 ${
               index === currentBgIndex ? 'opacity-30' : 'opacity-0'
             }`}
-            style={{ backgroundImage: `url(${bg})` }}
+            style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
           />
         ))}
 

@@ -17,6 +17,14 @@ A comprehensive, enterprise-grade web application for CEO Transnational Resource
 - **Real-time analytics** - Business metrics dashboard
 - **Legal compliance** - GDPR, privacy policy, terms of service
 
+### 🏢 ERP Modules
+- **Dashboard** - Real-time business metrics and quick actions
+- **Projects** - Project management with CRUD operations
+- **Inventory** - Item tracking and supplier management
+- **Leads** - Customer relationship management
+- **Invoices** - Billing and payment tracking
+- **Profile** - User settings and authentication
+
 ### 🎨 Advanced UI/UX
 - **Mobile-first responsive design** - Optimized for all devices
 - **Dynamic hero backgrounds** - Auto-rotating project showcases
@@ -40,6 +48,7 @@ A comprehensive, enterprise-grade web application for CEO Transnational Resource
 - **TailwindCSS** - Utility-first CSS framework
 - **Lucide React** - Beautiful icon library
 - **React Context** - State management
+- **React Router** - Client-side routing
 
 ### Backend & API
 - **Express.js** - Mock API server
@@ -48,6 +57,73 @@ A comprehensive, enterprise-grade web application for CEO Transnational Resource
 
 ### Deployment & DevOps
 - **Vercel** - Serverless deployment platform
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/ceotr-ltd-erp-suite.git
+   cd ceotr-ltd-erp-suite
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev:full
+   ```
+
+4. Open your browser and navigate to `http://localhost:3001`
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── Dashboard.jsx   # ERP dashboard
+│   ├── Projects.jsx    # Project management
+│   ├── Inventory.jsx   # Inventory tracking
+│   ├── Leads.jsx       # Lead management
+│   ├── Invoices.jsx    # Invoice system
+│   ├── Profile.jsx     # User profile
+│   └── ...             # Other components
+├── context/            # React context providers
+├── data/              # Mock data and configurations
+└── index.css          # Global styles
+```
+
+## 🎯 Usage
+
+- **Home Page**: Overview of services and portfolio
+- **Dashboard**: Access business metrics and quick actions
+- **Projects**: Manage ongoing and completed projects
+- **Inventory**: Track items and suppliers
+- **Leads**: Handle customer inquiries
+- **Invoices**: Generate and manage invoices
+- **Profile**: Update user information
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Contact
+
+- **Email**: ceotrltd@gmail.com
+- **Phone**: +234 806 450 8595
+- **Website**: https://ceotrltd.com
 - **GitHub Integration** - Automatic deployments
 - **Git** - Version control
 - **npm** - Package management

@@ -87,8 +87,8 @@
     @apply animate-pulse bg-neutral-200 h-48 rounded-lg mb-4;
   }
 
-  .skeleton-text {
-    @apply animate-pulse bg-neutral-200 h-4 rounded;
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
   }
 
   /* Advanced Animations */

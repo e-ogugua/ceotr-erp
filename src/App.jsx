@@ -1,4 +1,5 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import { CurrencyProvider } from './context/CurrencyContext'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -11,6 +12,12 @@ import Footer from './components/Footer'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsOfService from './components/TermsOfService'
 import CookiePolicy from './components/CookiePolicy'
+import Dashboard from './components/Dashboard'
+import Projects from './components/Projects'
+import Inventory from './components/Inventory'
+import Leads from './components/Leads'
+import Invoices from './components/Invoices'
+import Profile from './components/Profile'
 
 function App() {
   // Check if we're on a specific page route
@@ -44,18 +51,28 @@ function App() {
   // Default: render the full homepage
   return (
     <CurrencyProvider>
-      <div className="min-h-screen bg-neutral-50">
-        <Header />
-        <main>
-          <Hero />
-          <Features />
-          <About />
-          <Services />
-          <Portfolio />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
+      <Routes>
+        <Route path="/" element={
+          <div className="min-h-screen bg-neutral-50">
+            <Header />
+            <main>
+              <Hero />
+              <Features />
+              <About />
+              <Services />
+              <Portfolio />
+              <Contact />
+            </main>
+            <Footer />
+          </div>
+        } />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/leads" element={<Leads />} />
+        <Route path="/invoices" element={<Invoices />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
     </CurrencyProvider>
   )
 }
