@@ -115,7 +115,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **Email**: ceotrltd@gmail.com
+- **Email**: ceotrlimited@gmail.com
 - **Phone**: +234 806 450 8595
 - **Website**: https://ceotrltd.com
 - **GitHub Integration** - Automatic deployments
@@ -384,7 +384,7 @@ vercel --prod
 ## 📞 Support & Contact
 
 ### Development Team
-- **Email:** ceotrltd@gmail.com
+- **Email:** ceotrlimited@gmail.com
 - **Phone:** +234 806 450 8595
 - **Business Hours:** Mon–Fri, 9:00 AM – 6:00 PM
 

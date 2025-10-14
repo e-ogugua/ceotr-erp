@@ -250,8 +250,8 @@ export const COMPANY_INFO = {
   tagline: 'Discover Excellence!',
   founded: '2015',
   headquarters: 'Enugu, Nigeria',
-  phone: ['+234 806 450 8595', '+234 812 239 437'],
-  email: ['ceotrltd@gmail.com', 'support@ceotr.com'],
+  phone: ['+234 806 450 8595', '+234 806 900 9116'],
+  email: ['ceotrlimited@gmail.com', 'ceotrlimited@gmail.com'],
   businessHours: 'Mon–Fri, 9:00 AM – 6:00 PM',
   socialLinks: {
     linkedin: 'https://linkedin.com/company/ceotr',

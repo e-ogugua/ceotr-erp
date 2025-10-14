@@ -361,7 +361,7 @@ npm run build -- --analyze
 - **Performance Monitoring** - Lighthouse and analytics
 
 ### Emergency Contacts
-- **Development Team:** ceotrltd@gmail.com
+- **Development Team:** ceotrlimited@gmail.com
 - **Phone:** +234 806 450 8595
 - **Business Hours:** Mon–Fri, 9:00 AM – 6:00 PM WAT
 

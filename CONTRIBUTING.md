@@ -351,7 +351,7 @@ References #456
 - **Documentation** - Check README and docs
 
 ### Development Team
-- **Email:** ceotrltd@gmail.com
+- **Email:** ceotrlimited@gmail.com
 - **Phone:** +234 806 450 8595
 - **Response Time:** 24-48 hours
 
