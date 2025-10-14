@@ -19,8 +19,6 @@ A comprehensive, enterprise-grade web application for CEO Transnational Resource
 
 ### 🏢 ERP Modules
 - **Dashboard** - Real-time business metrics and quick actions
-- **Projects** - Project management with CRUD operations
-- **Inventory** - Item tracking and supplier management
 - **Leads** - Customer relationship management
 - **Invoices** - Billing and payment tracking
 - **Profile** - User settings and authentication
@@ -90,8 +88,6 @@ A comprehensive, enterprise-grade web application for CEO Transnational Resource
 src/
 ├── components/          # React components
 │   ├── Dashboard.jsx   # ERP dashboard
-│   ├── Projects.jsx    # Project management
-│   ├── Inventory.jsx   # Inventory tracking
 │   ├── Leads.jsx       # Lead management
 │   ├── Invoices.jsx    # Invoice system
 │   ├── Profile.jsx     # User profile
@@ -105,8 +101,6 @@ src/
 
 - **Home Page**: Overview of services and portfolio
 - **Dashboard**: Access business metrics and quick actions
-- **Projects**: Manage ongoing and completed projects
-- **Inventory**: Track items and suppliers
 - **Leads**: Handle customer inquiries
 - **Invoices**: Generate and manage invoices
 - **Profile**: Update user information
