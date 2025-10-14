@@ -86,9 +86,19 @@ export default async (req, res) => {
         `<h2>Contact Received</h2><p>Hi ${name},</p><p>Thank you for reaching out to CEOTR Ltd. We have received your message:</p><p><strong>${message}</strong></p><p>We will review it and respond as soon as possible.</p><p>Best regards,<br>CEOTR Ltd Team</p>`
       );
     }
-  } else if (req.method === 'GET' && req.url === '/api/health') {
-    res.status(200).json({ status: 'OK', message: 'Mock API server is running' });
-  } else {
-    res.status(404).json({ error: 'Not Found' });
-  }
+  } else if (req.method === 'POST' && req.url === '/api/mock/newsletter') {
+    const { email } = req.body;
+    res.status(200).json({
+      success: true,
+      message: 'Newsletter subscription successful',
+      subscriptionId: `NL${Date.now()}`
+    });
+    if (email) {
+      await sendEmail(
+        process.env.ORDER_NOTIFICATIONS_EMAIL,
+        'New Newsletter Subscription',
+        `New newsletter subscription from ${email}`,
+        `<h2>New Newsletter Subscription</h2><p><strong>Email:</strong> ${email}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`
+      );
+    }
 };

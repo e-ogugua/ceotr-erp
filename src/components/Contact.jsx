@@ -21,38 +21,44 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    // Create mailto link with form data
-    const subject = encodeURIComponent(`Contact Form: ${formData.subject}`);
-    const body = encodeURIComponent(`
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
+    try {
+      const response = await fetch('/api/mock/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+          timestamp: new Date().toISOString()
+        }),
+      });
 
-Message:
-${formData.message}
-
----
-This message was sent from the CEOTR Ltd website contact form.
-    `);
-
-    const mailtoUrl = `mailto:ceotrlimited@gmail.com?subject=${subject}&body=${body}`;
-    window.open(mailtoUrl, '_blank');
-
-    // Reset form and show success
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
-    setShowSuccess(true);
-    setTimeout(() => {
-      setShowSuccess(false);
-    }, 3000);
+      if (response.ok) {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            subject: '',
+            message: ''
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Contact submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
