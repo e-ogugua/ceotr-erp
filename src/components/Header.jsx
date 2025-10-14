@@ -70,31 +70,31 @@ const Header = () => {
           </div>
 
           {/* Enhanced Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 xl:space-x-3 max-w-3xl overflow-hidden">
+          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 max-w-2xl overflow-hidden">
             {navigationLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="relative px-2 py-2 lg:px-3 lg:py-2 xl:px-4 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target flex items-center gap-1 text-sm whitespace-nowrap"
+                className="relative px-2 py-1 lg:px-3 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target flex items-center gap-1 text-sm whitespace-nowrap"
               >
                 {link.icon}
-                <span className="hidden xl:inline">{link.label}</span>
+                <span className="hidden lg:inline">{link.label}</span>
                 <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></div>
               </a>
             ))}
           </nav>
 
           {/* Enhanced Currency Toggle & Mobile Menu */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             {/* Enhanced Currency Toggle */}
             <div className="relative">
               <button
                 onClick={toggleCurrency}
-                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-primary-50 to-primary-100 hover:from-primary-100 hover:to-primary-200 px-4 py-2 rounded-xl font-medium text-primary-700 transition-all duration-300 shadow-sm hover:shadow-md border border-primary-200/50"
+                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-primary-50 to-primary-100 hover:from-primary-100 hover:to-primary-200 px-3 py-2 rounded-lg font-medium text-primary-700 transition-all duration-300 shadow-sm hover:shadow-md border border-primary-200/50 min-h-[44px]"
               >
-                <Globe size={18} />
+                <Globe size={16} />
                 <span>{CURRENCIES[currentCurrency].symbol}</span>
-                <ChevronDown size={16} className={`transition-transform duration-300 ${isCurrencyOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`transition-transform duration-300 ${isCurrencyOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Currency Dropdown */}
@@ -122,7 +122,7 @@ const Header = () => {
               <select
                 value={currentCurrency}
                 onChange={(e) => setCurrentCurrency(e.target.value)}
-                className="text-sm font-semibold text-primary-600 bg-transparent border-2 border-primary-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="text-sm font-semibold text-primary-600 bg-transparent border-2 border-primary-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[44px]"
               >
                 {Object.entries(CURRENCIES).map(([code, config]) => (
                   <option key={code} value={code} className="font-semibold">
@@ -135,7 +135,7 @@ const Header = () => {
             {/* Enhanced Mobile Menu Button */}
             <button
               onClick={toggleMenu}
-              className="md:hidden p-3 rounded-xl text-neutral-600 hover:text-primary-600 hover:bg-primary-50 transition-all duration-300 shadow-sm hover:shadow-md border border-neutral-200/50"
+              className="md:hidden p-3 rounded-xl text-neutral-600 hover:text-primary-600 hover:bg-primary-50 transition-all duration-300 shadow-sm hover:shadow-md border border-neutral-200/50 min-h-[44px]"
               aria-label="Toggle menu"
             >
               <div className="relative w-6 h-6">
