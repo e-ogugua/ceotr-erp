@@ -8,6 +8,22 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="md:col-span-2">
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                src="/images/logo/ceotr-logo-white.png"
+                alt={COMPANY_INFO.name}
+                className="h-10 w-auto rounded-lg shadow-sm bg-gradient-to-br from-primary-50 to-white border border-primary-200/50"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextElementSibling.style.display = 'block';
+                }}
+              />
+              <div className="hidden" style={{display: 'none'}}>
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg">
+                  {COMPANY_INFO.name.charAt(0)}
+                </div>
+              </div>
+            </div>
             <h3 className="text-2xl font-bold text-primary-400 mb-4">{COMPANY_INFO.name}</h3>
             <p className="text-neutral-300 mb-4">
               {COMPANY_INFO.fullName}

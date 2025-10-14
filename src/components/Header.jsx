@@ -30,16 +30,16 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-neutral-200/50">
+    <header className="bg-white/98 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-neutral-200/60">
       <div className="container-enhanced">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-5">
           {/* Enhanced Logo & Branding */}
           <div className="flex items-center group cursor-pointer">
             <div className="relative">
               <img
                 src="/images/logo/ceotr-logo-white.png"
                 alt={COMPANY_INFO.name}
-                className="h-16 w-auto logo-enhanced rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md"
+                className="h-16 w-auto logo-enhanced rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md bg-gradient-to-br from-primary-50 to-white backdrop-blur-sm border border-primary-200/50"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `
@@ -58,8 +58,8 @@ const Header = () => {
             </div>
 
             {/* Company Name */}
-            <div className="ml-3 hidden sm:block">
-              <h1 className="text-lg company-name-bold leading-tight tracking-tight">
+            <div className="ml-4 hidden sm:block">
+              <h1 className="text-xl font-bold text-neutral-800 leading-tight tracking-tight">
                 CEO Transnational<br />
                 Resources Limited
               </h1>
@@ -70,16 +70,16 @@ const Header = () => {
           </div>
 
           {/* Enhanced Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
             {navigationLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target flex items-center gap-2"
+                className="relative px-3 py-2 lg:px-5 lg:py-3 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target flex items-center gap-2 text-sm"
               >
                 {link.icon}
-                {link.label}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-3/4"></div>
+                <span className="hidden lg:inline">{link.label}</span>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></div>
               </a>
             ))}
           </nav>
