@@ -1,3 +1,11 @@
 {
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "functions": {
+    "server.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ]
 }
