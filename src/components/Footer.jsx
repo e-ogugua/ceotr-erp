@@ -137,6 +137,18 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        <div className="border-t border-neutral-800 pt-8 mt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-neutral-400 text-sm">
+              © {new Date().getFullYear()} {COMPANY_INFO.name}. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4 mt-4 md:mt-0">
+              <span className="text-neutral-500 text-xs bg-neutral-800 px-2 py-1 rounded">v4.0.0</span>
+              <span className="text-neutral-500 text-xs bg-neutral-800 px-2 py-1 rounded">Built with React & Tailwind</span>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   );

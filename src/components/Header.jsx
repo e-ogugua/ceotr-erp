@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Menu, X, Globe, ChevronDown, Home, Briefcase, FolderOpen, Users, FileText, Settings, BarChart3 } from 'lucide-react';
 import { CurrencyContext } from '../context/CurrencyContext';
 import { COMPANY_INFO } from '../data/demoServices';
 
@@ -17,16 +17,16 @@ const Header = () => {
   };
 
   const navigationLinks = [
-    { href: '#services', label: 'Services' },
-    { href: '#about', label: 'About' },
-    { href: '#portfolio', label: 'Portfolio' },
-    { href: '#contact', label: 'Contact' },
-    { href: '/dashboard', label: 'Dashboard' },
-    { href: '/projects', label: 'Projects' },
-    { href: '/inventory', label: 'Inventory' },
-    { href: '/leads', label: 'Leads' },
-    { href: '/invoices', label: 'Invoices' },
-    { href: '/profile', label: 'Profile' }
+    { href: '#services', label: 'Services', icon: <Briefcase size={16} /> },
+    { href: '#about', label: 'About', icon: <Users size={16} /> },
+    { href: '#portfolio', label: 'Portfolio', icon: <FolderOpen size={16} /> },
+    { href: '#contact', label: 'Contact', icon: <FileText size={16} /> },
+    { href: '/dashboard', label: 'Dashboard', icon: <BarChart3 size={16} /> },
+    { href: '/projects', label: 'Projects', icon: <FolderOpen size={16} /> },
+    { href: '/inventory', label: 'Inventory', icon: <BarChart3 size={16} /> },
+    { href: '/leads', label: 'Leads', icon: <Users size={16} /> },
+    { href: '/invoices', label: 'Invoices', icon: <FileText size={16} /> },
+    { href: '/profile', label: 'Profile', icon: <Settings size={16} /> }
   ];
 
   return (
@@ -39,7 +39,7 @@ const Header = () => {
               <img
                 src="/images/logo/ceotr-logo-white.png"
                 alt={COMPANY_INFO.name}
-                className="h-14 w-auto logo-enhanced rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md"
+                className="h-16 w-auto logo-enhanced rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `
@@ -75,8 +75,9 @@ const Header = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target"
+                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target flex items-center gap-2"
               >
+                {link.icon}
                 {link.label}
                 <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-3/4"></div>
               </a>
