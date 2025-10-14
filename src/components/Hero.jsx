@@ -25,21 +25,21 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center">
+    <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-primary-50/20 via-blue-50/30 to-indigo-100/20">
       {/* Dynamic Background Images */}
       <div className="absolute inset-0">
         {heroBackgrounds.map((bg, index) => (
           <div
             key={index}
             className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-2000 ${
-              index === currentBgIndex ? 'opacity-30' : 'opacity-0'
+              index === currentBgIndex ? 'opacity-20' : 'opacity-0'
             }`}
             style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
           />
         ))}
 
         {/* Overlay gradient for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50/80 via-blue-50/70 to-indigo-100/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-primary-50/40 to-blue-100/50"></div>
 
         {/* Floating geometric shapes */}
         <div className="floating-element top-20 left-10 w-20 h-20 bg-primary-300/30 rotate-45 rounded-lg"></div>
@@ -48,9 +48,9 @@ const Hero = () => {
         <div className="floating-element top-60 right-40 w-24 h-24 bg-blue-300/20 rounded-full"></div>
 
         {/* Large background circles */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl animate-pulse-glow"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-200/20 rounded-full blur-3xl animate-pulse-glow"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary-200/20 to-blue-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200/20 rounded-full blur-3xl animate-pulse-glow"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-200/15 rounded-full blur-3xl animate-pulse-glow"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary-200/15 to-blue-200/15 rounded-full blur-3xl"></div>
       </div>
 
       {/* Hero Content */}
@@ -91,7 +91,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button
                 onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-                className="btn-gradient flex items-center justify-center gap-2 group"
+                className="btn-primary flex items-center justify-center gap-2 group"
               >
                 Get Started Today
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

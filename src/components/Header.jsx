@@ -39,16 +39,16 @@ const Header = () => {
               <img
                 src="/images/logo/ceotr-logo-white.png"
                 alt={COMPANY_INFO.name}
-                className="h-16 w-auto logo-enhanced rounded-xl"
+                className="h-14 w-auto logo-enhanced rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = `
-                    <div class="flex items-center gap-3">
-                      <div class="w-12 h-12 bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg">
-                        C
+                    <div class="flex items-center gap-3 p-2">
+                      <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">
+                        ${COMPANY_INFO.name.charAt(0)}
                       </div>
                       <div>
-                        <h1 class="text-2xl company-name-bold tracking-tight">${COMPANY_INFO.name}</h1>
+                        <h1 class="text-xl company-name-bold tracking-tight">${COMPANY_INFO.name}</h1>
                         <p class="text-sm text-neutral-500 -mt-1 font-medium">${COMPANY_INFO.tagline}</p>
                       </div>
                     </div>
@@ -58,7 +58,7 @@ const Header = () => {
             </div>
 
             {/* Company Name */}
-            <div className="ml-4 hidden sm:block">
+            <div className="ml-3 hidden sm:block">
               <h1 className="text-lg company-name-bold leading-tight tracking-tight">
                 CEO Transnational<br />
                 Resources Limited
@@ -75,7 +75,7 @@ const Header = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group"
+                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-lg hover:bg-primary-50 group touch-target"
               >
                 {link.label}
                 <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-3/4"></div>
