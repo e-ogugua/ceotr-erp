@@ -1,7 +1,7 @@
 {
   "outputDirectory": "dist",
   "functions": {
-    "server.js": {
+    "api/index.js": {
       "maxDuration": 10
     }
   },
