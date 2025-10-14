@@ -20,19 +20,13 @@ const Header = () => {
     { href: '#services', label: 'Services', icon: <Briefcase size={16} /> },
     { href: '#about', label: 'About', icon: <Users size={16} /> },
     { href: '#portfolio', label: 'Portfolio', icon: <FolderOpen size={16} /> },
-    { href: '#contact', label: 'Contact', icon: <FileText size={16} /> },
-    { href: '/dashboard', label: 'Dashboard', icon: <BarChart3 size={16} /> },
-    { href: '/projects', label: 'Projects', icon: <FolderOpen size={16} /> },
-    { href: '/inventory', label: 'Inventory', icon: <BarChart3 size={16} /> },
-    { href: '/leads', label: 'Leads', icon: <Users size={16} /> },
-    { href: '/invoices', label: 'Invoices', icon: <FileText size={16} /> },
-    { href: '/profile', label: 'Profile', icon: <Settings size={16} /> }
+    { href: '#contact', label: 'Contact', icon: <FileText size={16} /> }
   ];
 
   return (
-    <header className="bg-white/98 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-neutral-200/60">
+    <header className="bg-white backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-neutral-200/60">
       <div className="container-enhanced">
-        <div className="flex justify-between items-center py-5">
+        <div className="flex justify-between items-center py-5 gap-6">
           {/* Enhanced Logo & Branding */}
           <div className="flex items-center group cursor-pointer">
             <div className="relative">

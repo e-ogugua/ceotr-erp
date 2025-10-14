@@ -13,8 +13,6 @@ import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsOfService from './components/TermsOfService'
 import CookiePolicy from './components/CookiePolicy'
 import Dashboard from './components/Dashboard'
-import Projects from './components/Projects'
-import Inventory from './components/Inventory'
 import Leads from './components/Leads'
 import Invoices from './components/Invoices'
 import Profile from './components/Profile'
@@ -67,8 +65,6 @@ function App() {
           </div>
         } />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/inventory" element={<Inventory />} />
         <Route path="/leads" element={<Leads />} />
         <Route path="/invoices" element={<Invoices />} />
         <Route path="/profile" element={<Profile />} />
