@@ -86,49 +86,24 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="feature-card group cursor-pointer" onClick={() => {/* Handle feature click */}}>
-              {/* Background Pattern */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgColor} opacity-50 rounded-2xl`}></div>
-
-              {/* Floating Icon */}
-              <div className="relative z-10 mb-6">
-                <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300 animate-pulse-glow`}>
+            <div key={index} className="card-enhanced group hover-lift">
+              <div className="relative mb-6">
+                <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   {feature.icon}
                 </div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgColor} rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300`}></div>
               </div>
-
-              {/* Content */}
-              <div className="relative z-10">
-                <h3 className="text-xl font-bold text-neutral-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
-                  {feature.title}
-                </h3>
-                <p className="text-neutral-600 mb-6 leading-relaxed">
-                  {feature.description}
-                </p>
-
-                {/* Feature Stats */}
-                <div className="flex items-center justify-between text-sm text-neutral-500 mb-4">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span>Proven Results</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star size={12} className="text-yellow-500 fill-current" />
-                    <span>5.0 Rating</span>
-                  </div>
-                </div>
-
-                {/* Learn More Link */}
-                <div className="flex items-center gap-2 text-primary-600 font-medium group-hover:gap-3 transition-all duration-300">
-                  <span>Learn More</span>
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+              <h3 className="text-xl font-bold text-neutral-800 mb-4">{feature.title}</h3>
+              <p className="text-neutral-600 leading-relaxed mb-6">{feature.description}</p>
+              <a
+                href="#services"
+                className="btn-outline inline-flex items-center gap-2 group/btn"
+              >
+                Learn More
+                <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+              </a>
             </div>
           ))}
         </div>
