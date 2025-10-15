@@ -15,6 +15,8 @@ const QuoteModal = ({ isOpen, onClose, service }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   if (!isOpen) return null;
 
@@ -29,8 +31,9 @@ const QuoteModal = ({ isOpen, onClose, service }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setShowError(false);
+    setErrorMessage('');
 
-    // Mock API call
     try {
       const response = await fetch('/api/mock/quote', {
         method: 'POST',
@@ -46,11 +49,6 @@ const QuoteModal = ({ isOpen, onClose, service }) => {
       });
 
       if (response.ok) {
-        console.log('Quote request submitted:', {
-          ...formData,
-          service: service?.title,
-          serviceId: service?.id
-        });
         setShowSuccess(true);
         setTimeout(() => {
           onClose();
@@ -64,11 +62,14 @@ const QuoteModal = ({ isOpen, onClose, service }) => {
             projectDetails: '',
             currency: currentCurrency
           });
-        }, 2000);
+        }, 3000);
+      } else {
+        throw new Error('Failed to submit quote request');
       }
     } catch (error) {
       console.error('Quote submission error:', error);
-    } finally {
+      setErrorMessage('Failed to submit quote request. Please try again or contact us directly.');
+      setShowError(true);
       setIsSubmitting(false);
     }
   };
@@ -114,11 +115,34 @@ const QuoteModal = ({ isOpen, onClose, service }) => {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-neutral-900 mb-2">
-                Quote Request Received!
+                Quote Request Submitted Successfully!
               </h3>
-              <p className="text-neutral-600">
-                Your request was received. We'll send you a tailored proposal soon.
+              <p className="text-neutral-600 mb-4">
+                Thank you for your quote request. We've received your requirements and will prepare a tailored proposal for you within 2-3 business days.
               </p>
+              <p className="text-sm text-primary-600">
+                A confirmation email has also been sent to your email address.
+              </p>
+            </div>
+          ) : showError ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+                Failed to Submit Quote Request
+              </h3>
+              <p className="text-neutral-600 mb-4">
+                {errorMessage}
+              </p>
+              <button
+                onClick={() => setShowError(false)}
+                className="btn-secondary"
+              >
+                Try Again
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">

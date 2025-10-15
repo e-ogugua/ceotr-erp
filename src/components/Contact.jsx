@@ -12,18 +12,14 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setShowError(false);
+    setErrorMessage('');
 
     try {
       const response = await fetch('/api/mock/contact', {
@@ -52,10 +48,14 @@ const Contact = () => {
             subject: '',
             message: ''
           });
-        }, 2000);
+        }, 3000);
+      } else {
+        throw new Error('Failed to send message');
       }
     } catch (error) {
       console.error('Contact submission error:', error);
+      setErrorMessage('Failed to send message. Please try again or contact us directly.');
+      setShowError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -180,11 +180,34 @@ const Contact = () => {
                     </svg>
                   </div>
                   <h4 className="text-xl font-semibold text-neutral-900 mb-2">
-                    Message Sent!
+                    Message Sent Successfully!
                   </h4>
-                  <p className="text-neutral-600">
-                    Thank you for contacting us. We'll get back to you within 24 hours.
+                  <p className="text-neutral-600 mb-4">
+                    Thank you for contacting us. We've received your message and will get back to you within 24 hours.
                   </p>
+                  <p className="text-sm text-primary-600">
+                    A confirmation email has also been sent to your email address.
+                  </p>
+                </div>
+              ) : showError ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-semibold text-neutral-900 mb-2">
+                    Failed to Send Message
+                  </h4>
+                  <p className="text-neutral-600 mb-4">
+                    {errorMessage}
+                  </p>
+                  <button
+                    onClick={() => setShowError(false)}
+                    className="btn-secondary"
+                  >
+                    Try Again
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
