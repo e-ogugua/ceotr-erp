@@ -1,167 +1,170 @@
 import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
 
-// Configure nodemailer transporter with advanced Gmail-specific settings
-const createGmailTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
-    secure: process.env.SMTP_PORT === '465', // Use SSL for port 465
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-    tls: {
-      // Advanced TLS settings for Gmail compatibility
-      ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!RC4:!MD5:!DSS',
-      rejectUnauthorized: false,
-      // Enable all TLS versions that Gmail might support
-      minVersion: 'TLSv1',
-      maxVersion: 'TLSv1.3',
-      // Server name indication for proper certificate validation
-      servername: 'smtp.gmail.com'
-    },
-    // Connection settings optimized for serverless with Gmail
-    connectionTimeout: 10000,  // Reduced for faster failure detection
-    greetingTimeout: 8000,     // Reduced for faster failure detection
-    socketTimeout: 10000,      // Reduced for faster failure detection
+// Gmail API Configuration for serverless compatibility
+const GMAIL_SERVICE_ACCOUNT_EMAIL = process.env.GMAIL_SERVICE_ACCOUNT_EMAIL;
+const GMAIL_SERVICE_ACCOUNT_KEY = process.env.GMAIL_SERVICE_ACCOUNT_KEY?.replace(/\\n/g, '\n');
+const GMAIL_SENDING_USER = process.env.GMAIL_SENDING_USER || process.env.SMTP_USER;
 
-    // Enable connection pooling with strict limits for serverless
-    pool: true,                // Enable pooling for better performance
-    maxConnections: 1,         // Limit to 1 connection per function
-    maxMessages: 3,            // Allow up to 3 messages per connection
-    rateLimit: 1,              // 1 message per second
-    rateDelta: 1000,           // 1 second between messages
+// Initialize Gmail API client
+const getGmailClient = async () => {
+  if (!GMAIL_SERVICE_ACCOUNT_EMAIL || !GMAIL_SERVICE_ACCOUNT_KEY || !GMAIL_SENDING_USER) {
+    throw new Error('Gmail API credentials not configured. Please set GMAIL_SERVICE_ACCOUNT_EMAIL, GMAIL_SERVICE_ACCOUNT_KEY, and GMAIL_SENDING_USER');
+  }
 
-    // Disable keep-alive to avoid stale connections
-    keepAlive: false,
-
-    // Debug settings for troubleshooting
-    debug: process.env.NODE_ENV === 'development',
-    logger: process.env.NODE_ENV === 'development',
-
-    // Additional Gmail-specific settings
-    service: 'gmail',          // Use Gmail service for better defaults
-    authMethod: 'LOGIN'        // Specify auth method explicitly
+  return new google.auth.JWT({
+    email: GMAIL_SERVICE_ACCOUNT_EMAIL,
+    key: GMAIL_SERVICE_ACCOUNT_KEY,
+    scopes: ['https://mail.google.com/'],
+    subject: GMAIL_SENDING_USER,
   });
 };
 
-// Global transporter instance
-const transporter = createGmailTransporter();
+// Alternative: Keep SMTP as fallback for local development
+const useGmailAPI = process.env.USE_GMAIL_API === 'true' || process.env.NODE_ENV === 'production';
 
-// Function to send email with advanced retry logic for Gmail
+// Function to send email via Gmail API (serverless-friendly)
+async function sendEmailViaGmailAPI(to, subject, text, html) {
+  console.log(`🔵 [GmailAPI] Sending email via Gmail API...`);
+  console.log(`🔵 [GmailAPI] To: ${to}`);
+  console.log(`🔵 [GmailAPI] Subject: ${subject}`);
+
+  try {
+    const auth = await getGmailClient();
+
+    // Build RFC 822 email message
+    const emailLines = [
+      `To: ${to}`,
+      `From: ${GMAIL_SENDING_USER}`,
+      `Subject: ${subject}`,
+      'MIME-Version: 1.0',
+      'Content-Type: multipart/alternative; boundary="boundary_example"',
+      '',
+      '--boundary_example',
+      'Content-Type: text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding: 7bit',
+      '',
+      text,
+      '',
+      '--boundary_example',
+      'Content-Type: text/html; charset=UTF-8',
+      'Content-Transfer-Encoding: 7bit',
+      '',
+      html,
+      '',
+      '--boundary_example--',
+      '',
+    ];
+
+    const email = emailLines.join('\r\n');
+
+    // Send via Gmail API
+    const gmail = google.gmail({ version: 'v1', auth });
+    const response = await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: Buffer.from(email).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
+      },
+    });
+
+    console.log('🟢 [GmailAPI] Email sent successfully:', response.data);
+    return { success: true, messageId: response.data.id };
+
+  } catch (error) {
+    console.error('🔴 [GmailAPI] Gmail API Error:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    throw error;
+  }
+}
+
+// Function to send email via SMTP (fallback for local development)
+async function sendEmailViaSMTP(to, subject, text, html) {
+  console.log(`🔵 [SMTP] Sending email via SMTP...`);
+  console.log(`🔵 [SMTP] To: ${to}`);
+  console.log(`🔵 [SMTP] Subject: ${subject}`);
+
+  try {
+    // Gmail SMTP configuration
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: process.env.SMTP_PORT === '465',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      tls: {
+        ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!RC4:!MD5:!DSS',
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1',
+        maxVersion: 'TLSv1.3',
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 8000,
+      socketTimeout: 10000,
+    });
+
+    const mailOptions = {
+      from: process.env.ORDER_EMAIL_FROM,
+      to,
+      subject,
+      text,
+      html,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('🟢 [SMTP] Email sent successfully:', info.messageId);
+    return { success: true, messageId: info.messageId };
+
+  } catch (error) {
+    console.error('🔴 [SMTP] SMTP Error:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    throw error;
+  }
+}
+
+// Main email sending function with API fallback
 async function sendEmail(to, subject, text, html, maxRetries = 3) {
-  console.log(`🔵 [sendEmail] Attempting to send email...`);
-  console.log(`🔵 [sendEmail] Recipient: ${to}`);
-  console.log(`🔵 [sendEmail] Subject: ${subject}`);
-  console.log(`🔵 [sendEmail] SMTP Config:`, {
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    user: process.env.SMTP_USER ? '***@gmail.com' : 'Not set',
-    from: process.env.ORDER_EMAIL_FROM
-  });
+  console.log(`🔵 [sendEmail] Attempting to send email to: ${to}`);
 
+  // Try Gmail API first (serverless-friendly)
+  if (useGmailAPI) {
+    try {
+      console.log(`🔵 [sendEmail] Trying Gmail API first...`);
+      return await sendEmailViaGmailAPI(to, subject, text, html);
+    } catch (apiError) {
+      console.error(`🔴 [sendEmail] Gmail API failed:`, apiError.message);
+      console.log(`🔵 [sendEmail] Falling back to SMTP...`);
+      // Fall back to SMTP if API fails
+    }
+  }
+
+  // Use SMTP as primary or fallback
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔵 [sendEmail] Attempt ${attempt}/${maxRetries}`);
-
-      const mailOptions = {
-        from: process.env.ORDER_EMAIL_FROM,
-        to,
-        subject,
-        text,
-        html,
-      };
-
-      console.log('🔵 [sendEmail] Sending email with options:', {
-        from: mailOptions.from,
-        to: mailOptions.to,
-        subject: mailOptions.subject,
-        hasText: !!mailOptions.text,
-        hasHtml: !!mailOptions.html
-      });
-
-      // Create new transporter for each attempt to avoid stale connections
-      const freshTransporter = createGmailTransporter();
-
-      // Create a promise with multiple timeout strategies
-      const emailPromise = freshTransporter.sendMail(mailOptions);
-
-      // Multiple timeout promises for different failure scenarios
-      const connectionTimeout = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Connection timeout - attempt ${attempt} - Gmail not responding`));
-        }, 15000); // 15 second connection timeout
-      });
-
-      const greetingTimeout = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Greeting timeout - attempt ${attempt} - SMTP handshake failed`));
-        }, 12000); // 12 second greeting timeout
-      });
-
-      const socketTimeout = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Socket timeout - attempt ${attempt} - Network issue`));
-        }, 10000); // 10 second socket timeout
-      });
-
-      // Race all timeout promises against the email promise
-      const info = await Promise.race([emailPromise, connectionTimeout, greetingTimeout, socketTimeout]);
-
-      console.log('🟢 [sendEmail] Email sent successfully:', {
-        messageId: info.messageId,
-        accepted: info.accepted,
-        rejected: info.rejected,
-        response: info.response,
-        attempt: attempt
-      });
-      return { success: true, messageId: info.messageId };
+      console.log(`🔵 [sendEmail] SMTP attempt ${attempt}/${maxRetries}`);
+      return await sendEmailViaSMTP(to, subject, text, html);
 
     } catch (error) {
-      console.error(`🔴 [sendEmail] Attempt ${attempt} failed:`, {
-        name: error.name,
-        message: error.message,
-        code: error.code,
-        stack: error.stack
-      });
+      console.error(`🔴 [sendEmail] SMTP attempt ${attempt} failed:`, error.message);
 
-      // Enhanced error analysis for Gmail-specific issues
-      if (error.message.includes('timeout') || error.message.includes('Timeout')) {
-        console.error(`🔴 [sendEmail] Gmail timeout issue - attempt ${attempt}`);
-        if (attempt === 1) {
-          console.error('🔴 [sendEmail] First attempt timed out - Gmail may be blocking this connection');
-          console.error('🔴 [sendEmail] This is common with serverless platforms like Vercel');
-        } else if (attempt === 2) {
-          console.error('🔴 [sendEmail] Second attempt timed out - persistent network issue');
-          console.error('🔴 [sendEmail] Gmail SMTP servers may be throttling this connection');
-        } else {
-          console.error('🔴 [sendEmail] All attempts timed out - Gmail SMTP not compatible with this serverless environment');
-          console.error('🔴 [sendEmail] RECOMMENDATION: Switch to SendGrid, Mailgun, or AWS SES for reliable serverless email delivery');
-        }
-      } else if (error.code === 'ECONNECTION') {
-        console.error('🔴 [sendEmail] Connection refused by Gmail SMTP server');
-        console.error('🔴 [sendEmail] Gmail may be blocking connections from this serverless environment');
-        console.error('🔴 [sendEmail] SOLUTION: Use SendGrid instead - it is designed for serverless platforms');
-      } else if (error.code === 'EAUTH') {
-        console.error('🔴 [sendEmail] Authentication failed - check Gmail app password');
-        console.error('🔴 [sendEmail] Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
-      } else if (error.message.includes('Greeting never received')) {
-        console.error('🔴 [sendEmail] SMTP server not responding to initial connection');
-        console.error('🔴 [sendEmail] Gmail firewall is likely blocking this serverless connection');
-        console.error('🔴 [sendEmail] ALTERNATIVE: Use SendGrid - works reliably with Vercel serverless functions');
-      }
-
-      // If this is the last attempt, throw the error
       if (attempt === maxRetries) {
         throw error;
       }
 
-      // Wait before retrying with exponential backoff
-      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 3000); // Max 3 seconds
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 3000);
       console.log(`🔵 [sendEmail] Waiting ${delay}ms before retry...`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
