@@ -81,10 +81,10 @@ async function sendEmail(to, subject, text, html) {
   }
 }
 
-// Vercel serverless function for booking form
+// Vercel serverless function for quote form
 export default async function handler(req, res) {
-  console.log('Booking API Request Headers:', req.headers);
-  console.log('Booking API Request Body:', req.body);
+  console.log('Quote API Request Headers:', req.headers);
+  console.log('Quote API Request Body:', req.body);
 
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -102,9 +102,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('Booking form submission received');
+    console.log('Quote form submission received');
 
-    const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
+    const { name, email, phone, budgetMin, budgetMax, projectDetails, currency, service, serviceId, timestamp } = req.body;
 
     if (!name || !email || !service) {
       return res.status(400).json({
@@ -116,8 +116,8 @@ export default async function handler(req, res) {
     // First send response to client
     const response = {
       success: true,
-      message: 'Booking submitted successfully',
-      bookingId: `BK${Date.now()}`
+      message: 'Quote request submitted successfully',
+      quoteId: `QT${Date.now()}`
     };
 
     console.log('Sending response to client:', response);
@@ -129,25 +129,9 @@ export default async function handler(req, res) {
       console.log('Sending admin notification email');
       const adminEmail = await sendEmail(
         process.env.ORDER_NOTIFICATIONS_EMAIL,
-        'New Booking Received',
-        `New booking from ${name} for ${service}.
-        Contact: ${email}
-        Phone: ${phone}
-        Project: ${projectDetails}
-        Start Date: ${startDate}
-        Currency: ${currency}
-        Timestamp: ${timestamp}`,
-        `
-        <h2>New Booking Received</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Service:</strong> ${service}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Project Details:</strong> ${projectDetails}</p>
-        <p><strong>Start Date:</strong> ${startDate}</p>
-        <p><strong>Currency:</strong> ${currency}</p>
-        <p><strong>Timestamp:</strong> ${timestamp}</p>
-        `
+        'New Quote Request',
+        `New quote request from ${name} for ${service}. Contact: ${email}. Budget: ${budgetMin}-${budgetMax}. Project: ${projectDetails}`,
+        `<h2>New Quote Request</h2><p><strong>Name:</strong> ${name}</p><p><strong>Service:</strong> ${service}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Budget Range:</strong> ${budgetMin} - ${budgetMax}</p><p><strong>Project Details:</strong> ${projectDetails}</p><p><strong>Currency:</strong> ${currency}</p><p><strong>Timestamp:</strong> ${timestamp}</p>`
       );
       console.log('Admin notification sent:', adminEmail);
 
@@ -155,38 +139,9 @@ export default async function handler(req, res) {
       console.log('Sending customer confirmation email');
       const customerEmail = await sendEmail(
         email,
-        'Booking Received - CEOTR Ltd',
-        `Hi ${name},
-
-Thank you for your booking request for ${service}.
-
-We have received your details and will contact you within 24 hours to confirm your booking.
-
-Booking Details:
-- Service: ${service}
-- Project: ${projectDetails}
-- Preferred Start Date: ${startDate}
-- Currency: ${currency}
-
-Best regards,
-CEOTR Ltd Team`,
-        `
-        <h2>Booking Received</h2>
-        <p>Hi ${name},</p>
-        <p>Thank you for choosing CEOTR Ltd for your ${service} needs.</p>
-        <p>We have received your booking request and our team will review it shortly.</p>
-
-        <h3>Booking Details:</h3>
-        <ul>
-          <li><strong>Service:</strong> ${service}</li>
-          <li><strong>Project:</strong> ${projectDetails}</li>
-          <li><strong>Preferred Start Date:</strong> ${startDate}</li>
-          <li><strong>Currency:</strong> ${currency}</li>
-        </ul>
-
-        <p>We will contact you within 24 hours to discuss next steps and confirm your booking.</p>
-        <p>Best regards,<br>CEOTR Ltd Team</p>
-        `
+        'Quote Request Received - CEOTR Ltd',
+        `Hi ${name}, thank you for requesting a quote for ${service}. We have received your requirements and will prepare a tailored proposal for you.`,
+        `<h2>Quote Request Received</h2><p>Hi ${name},</p><p>Thank you for considering CEOTR Ltd for your ${service} project.</p><p>We have received your quote request and our team is preparing a tailored proposal based on your requirements.</p><p><strong>Your Request:</strong></p><ul><li><strong>Service:</strong> ${service}</li><li><strong>Budget Range:</strong> ${budgetMin} - ${budgetMax} ${currency}</li><li><strong>Project Details:</strong> ${projectDetails}</li></ul><p>We will send you a detailed proposal within 2-3 business days.</p><p>Best regards,<br>CEOTR Ltd Team</p>`
       );
       console.log('Customer confirmation sent:', customerEmail);
 
@@ -196,7 +151,7 @@ CEOTR Ltd Team`,
       // But we should log this error for monitoring
     }
   } catch (error) {
-    console.error('Booking API Error:', error);
+    console.error('Quote API Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
