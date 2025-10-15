@@ -5,7 +5,7 @@ require('dotenv').config();
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -28,8 +28,14 @@ async function sendEmail(to, subject, text, html) {
   }
 }
 
+// Vercel serverless function
 module.exports = async (req, res) => {
-  // Handle CORS preflight requests
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -42,8 +48,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const url = new URL(req.url, `https://${req.headers.host}`);
-    const pathname = url.pathname;
+    // Get the pathname from the request
+    const pathname = req.url;
 
     if (pathname === '/api/mock/book') {
       const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
