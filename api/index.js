@@ -1,5 +1,8 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Debug log environment variables
 console.log('Environment Variables:', {
@@ -10,19 +13,24 @@ console.log('Environment Variables:', {
   NODE_ENV: process.env.NODE_ENV || 'development'
 });
 
-// Configure nodemailer transporter
+// Configure nodemailer transporter with Gmail-optimized settings
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: parseInt(process.env.SMTP_PORT || '587', 10),
-  secure: false,
+  secure: process.env.SMTP_PORT === '465', // Use SSL for port 465
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    // Do not fail on invalid certs
+    // Gmail specific TLS settings
+    ciphers: 'SSLv3',
     rejectUnauthorized: false
-  }
+  },
+  // Additional settings for better reliability
+  connectionTimeout: 60000,
+  greetingTimeout: 30000,
+  socketTimeout: 60000
 });
 
 // Verify transporter configuration
@@ -38,7 +46,7 @@ transporter.verify(function(error, success) {
 async function sendEmail(to, subject, text, html) {
   console.log(`Attempting to send email to: ${to}`);
   console.log(`Using SMTP server: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
-  
+
   try {
     const mailOptions = {
       from: process.env.ORDER_EMAIL_FROM,
@@ -47,7 +55,7 @@ async function sendEmail(to, subject, text, html) {
       text,
       html,
     };
-    
+
     console.log('Sending email with options:', {
       from: mailOptions.from,
       to: mailOptions.to,
@@ -55,7 +63,7 @@ async function sendEmail(to, subject, text, html) {
       hasText: !!mailOptions.text,
       hasHtml: !!mailOptions.html
     });
-    
+
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent successfully:', info.messageId);
     return { success: true, messageId: info.messageId };
@@ -65,14 +73,34 @@ async function sendEmail(to, subject, text, html) {
       message: error.message,
       code: error.code,
       stack: error.stack,
-      response: error.response
+      response: error.response,
+      smtpError: error.smtp ? error.smtp.response : undefined
     });
+
+    // More specific error handling for Gmail issues
+    if (error.code === 'EAUTH') {
+      console.error('🔴 Authentication failed - check SMTP credentials and App Password');
+      throw new Error('Gmail authentication failed. Please check your App Password and ensure "Less secure app access" is disabled while using App Password.');
+    } else if (error.code === 'ECONNECTION') {
+      console.error('🔴 Connection to SMTP server failed - check host and port');
+      throw new Error('Cannot connect to Gmail SMTP server. Please verify SMTP_HOST and SMTP_PORT settings.');
+    } else if (error.code === 'ETIMEDOUT') {
+      console.error('🔴 Connection to SMTP server timed out');
+      throw new Error('Connection to Gmail SMTP server timed out. Please try again.');
+    } else if (error.message.includes('Invalid login')) {
+      console.error('🔴 Invalid login credentials - check username and password');
+      throw new Error('Invalid Gmail credentials. Please check your email and App Password.');
+    } else if (error.message.includes('Application-specific password required')) {
+      console.error('🔴 Gmail requires App Password, not regular password');
+      throw new Error('Gmail requires an App Password, not your regular password. Please generate an App Password from your Google Account settings.');
+    }
+
     throw error; // Re-throw to handle in the calling function
   }
 }
 
 // Vercel serverless function
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -103,12 +131,12 @@ module.exports = async (req, res) => {
 
     if (pathname === '/api/mock/book') {
       const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
-      
+
       if (!email) {
         console.error('No email provided in booking request');
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Email is required' 
+        return res.status(400).json({
+          success: false,
+          message: 'Email is required'
         });
       }
 
@@ -118,7 +146,7 @@ module.exports = async (req, res) => {
         message: 'Booking submitted successfully',
         bookingId: `BK${Date.now()}`
       };
-      
+
       console.log('Sending response to client:', response);
       res.status(200).json(response);
 
@@ -174,7 +202,7 @@ CEOTR Ltd Team`,
           <p>Hi ${name},</p>
           <p>Thank you for choosing CEOTR Ltd for your ${service} needs.</p>
           <p>We have received your booking request and our team will review it shortly.</p>
-          
+
           <h3>Booking Details:</h3>
           <ul>
             <li><strong>Service:</strong> ${service}</li>
@@ -182,13 +210,13 @@ CEOTR Ltd Team`,
             <li><strong>Preferred Start Date:</strong> ${startDate}</li>
             <li><strong>Currency:</strong> ${currency}</li>
           </ul>
-          
+
           <p>We will contact you within 24 hours to discuss next steps and confirm your booking.</p>
           <p>Best regards,<br>CEOTR Ltd Team</p>
           `
         );
         console.log('Customer confirmation sent:', customerEmail);
-        
+
       } catch (emailError) {
         console.error('Failed to send one or more emails:', emailError);
         // We've already sent a success response, so we can't change it now
