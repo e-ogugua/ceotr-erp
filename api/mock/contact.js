@@ -60,7 +60,15 @@ async function sendEmail(to, subject, text, html) {
       hasHtml: !!mailOptions.html
     });
 
-    const info = await transporter.sendMail(mailOptions);
+    // Create a promise with timeout
+    const emailPromise = transporter.sendMail(mailOptions);
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Email sending timeout - operation took too long'));
+      }, 25000); // 25 second timeout
+    });
+
+    const info = await Promise.race([emailPromise, timeoutPromise]);
     console.log('🟢 [sendEmail] Email sent successfully:', {
       messageId: info.messageId,
       accepted: info.accepted,
@@ -79,7 +87,7 @@ async function sendEmail(to, subject, text, html) {
       smtpError: error.smtp ? error.smtp.response : undefined
     });
 
-    // More specific error handling for Gmail issues
+    // Enhanced error handling for Gmail issues
     if (error.code === 'EAUTH') {
       console.error('🔴 Authentication failed - check SMTP credentials and App Password');
       console.error('🔴 Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
@@ -88,19 +96,19 @@ async function sendEmail(to, subject, text, html) {
       console.error('🔴 Connection to SMTP server failed - check host and port');
       console.error('🔴 SMTP Settings should be: smtp.gmail.com:587');
       console.error('🔴 Alternative: Gmail SMTP may be blocked by serverless platforms. Try SendGrid instead.');
-    } else if (error.code === 'ETIMEDOUT') {
+    } else if (error.code === 'ETIMEDOUT' || error.message.includes('timeout') || error.message.includes('Timeout')) {
       console.error('🔴 Connection to SMTP server timed out');
       console.error('🔴 This may be due to firewall or network restrictions');
       console.error('🔴 Gmail SMTP often times out on serverless platforms like Vercel');
       console.error('🔴 RECOMMENDED SOLUTION: Switch to SendGrid, Mailgun, or AWS SES');
       console.error('🔴 These services are designed for cloud/serverless environments');
+    } else if (error.message.includes('Greeting never received')) {
+      console.error('🔴 SMTP server not responding - likely blocked by Gmail firewall');
+      console.error('🔴 SOLUTION: Use a professional email service like SendGrid instead of Gmail');
     } else if (error.message.includes('Invalid login')) {
       console.error('🔴 Invalid login credentials - check username and password');
     } else if (error.message.includes('Application-specific password required')) {
       console.error('🔴 Gmail requires App Password, not regular password');
-    } else if (error.message.includes('Greeting never received')) {
-      console.error('🔴 SMTP server not responding - likely blocked by Gmail firewall');
-      console.error('🔴 SOLUTION: Use a professional email service like SendGrid instead of Gmail');
     }
 
     throw new Error(errorMessage);
@@ -165,28 +173,48 @@ export default async function handler(req, res) {
 
     // Then handle email sending
     try {
+      console.log('🔵 Starting email sending process...');
+
       // Send notification to admin
-      console.log('Sending admin notification email');
-      const adminEmail = await sendEmail(
-        process.env.ORDER_NOTIFICATIONS_EMAIL,
-        'New Contact Form Submission',
-        `New contact from ${name}. Subject: ${subject}. Message: ${message}. Contact: ${email}`,
-        `<h2>New Contact Form Submission</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong> ${message}</p><p><strong>Timestamp:</strong> ${timestamp}</p>`
-      );
-      console.log('Admin notification sent:', adminEmail);
+      console.log('📧 Sending admin notification email...');
+      try {
+        const adminEmail = await sendEmail(
+          process.env.ORDER_NOTIFICATIONS_EMAIL,
+          'New Contact Form Submission',
+          `New contact from ${name}. Subject: ${subject}. Message: ${message}. Contact: ${email}`,
+          `<h2>New Contact Form Submission</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong> ${message}</p><p><strong>Timestamp:</strong> ${timestamp}</p>`
+        );
+        console.log('✅ Admin notification sent successfully:', adminEmail);
+      } catch (adminError) {
+        console.error('❌ Failed to send admin notification:', adminError.message);
+        console.error('❌ Admin email error details:', adminError);
+      }
 
       // Send confirmation to customer
-      console.log('Sending customer confirmation email');
-      const customerEmail = await sendEmail(
-        email,
-        'Contact Form Received - CEOTR Ltd',
-        `Hi ${name}, thank you for contacting us. We have received your message: "${message}". We will get back to you soon.`,
-        `<h2>Contact Received</h2><p>Hi ${name},</p><p>Thank you for reaching out to CEOTR Ltd. We have received your message:</p><p><strong>${message}</strong></p><p>We will review it and respond as soon as possible.</p><p>Best regards,<br>CEOTR Ltd Team</p>`
-      );
-      console.log('Customer confirmation sent:', customerEmail);
+      console.log('📧 Sending customer confirmation email...');
+      try {
+        const customerEmail = await sendEmail(
+          email,
+          'Contact Form Received - CEOTR Ltd',
+          `Hi ${name}, thank you for contacting us. We have received your message: "${message}". We will get back to you soon.`,
+          `<h2>Contact Received</h2><p>Hi ${name},</p><p>Thank you for reaching out to CEOTR Ltd. We have received your message:</p><p><strong>${message}</strong></p><p>We will review it and respond as soon as possible.</p><p>Best regards,<br>CEOTR Ltd Team</p>`
+        );
+        console.log('✅ Customer confirmation sent successfully:', customerEmail);
+      } catch (customerError) {
+        console.error('❌ Failed to send customer confirmation:', customerError.message);
+        console.error('❌ Customer email error details:', customerError);
+      }
+
+      console.log('🔵 Email sending process completed');
 
     } catch (emailError) {
-      console.error('Failed to send one or more emails:', emailError);
+      console.error('❌ Email sending process failed:', emailError);
+      console.error('❌ Full error details:', {
+        name: emailError.name,
+        message: emailError.message,
+        code: emailError.code,
+        stack: emailError.stack
+      });
       // We've already sent a success response, so we can't change it now
       // But we should log this error for monitoring
     }
