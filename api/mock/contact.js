@@ -26,8 +26,15 @@ const transporter = nodemailer.createTransport({
 
 // Function to send email
 async function sendEmail(to, subject, text, html) {
-  console.log(`Attempting to send email to: ${to}`);
-  console.log(`Using SMTP server: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
+  console.log(`🔵 [sendEmail] Attempting to send email...`);
+  console.log(`🔵 [sendEmail] Recipient: ${to}`);
+  console.log(`🔵 [sendEmail] Subject: ${subject}`);
+  console.log(`🔵 [sendEmail] SMTP Config:`, {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER ? '***@gmail.com' : 'Not set',
+    from: process.env.ORDER_EMAIL_FROM
+  });
 
   try {
     const mailOptions = {
@@ -38,7 +45,7 @@ async function sendEmail(to, subject, text, html) {
       html,
     };
 
-    console.log('Sending email with options:', {
+    console.log('🔵 [sendEmail] Sending email with options:', {
       from: mailOptions.from,
       to: mailOptions.to,
       subject: mailOptions.subject,
@@ -47,10 +54,16 @@ async function sendEmail(to, subject, text, html) {
     });
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.messageId);
+    console.log('🟢 [sendEmail] Email sent successfully:', {
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      response: info.response
+    });
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error sending email:', {
+    const errorMessage = `Failed to send email: ${error.message}`;
+    console.error('🔴 [sendEmail] Error:', {
       name: error.name,
       message: error.message,
       code: error.code,
@@ -61,23 +74,21 @@ async function sendEmail(to, subject, text, html) {
 
     // More specific error handling for Gmail issues
     if (error.code === 'EAUTH') {
-      console.error('🔴 Authentication failed - check SMTP credentials and App Password');
-      throw new Error('Gmail authentication failed. Please check your App Password and ensure "Less secure app access" is disabled while using App Password.');
+      console.error('🔴 [sendEmail] Authentication failed - check SMTP credentials and App Password');
+      console.error('🔴 [sendEmail] Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
     } else if (error.code === 'ECONNECTION') {
-      console.error('🔴 Connection to SMTP server failed - check host and port');
-      throw new Error('Cannot connect to Gmail SMTP server. Please verify SMTP_HOST and SMTP_PORT settings.');
+      console.error('🔴 [sendEmail] Connection to SMTP server failed - check host and port');
+      console.error('🔴 [sendEmail] SMTP Settings should be: smtp.gmail.com:587');
     } else if (error.code === 'ETIMEDOUT') {
-      console.error('🔴 Connection to SMTP server timed out');
-      throw new Error('Connection to Gmail SMTP server timed out. Please try again.');
+      console.error('🔴 [sendEmail] Connection to SMTP server timed out');
+      console.error('🔴 [sendEmail] This may be due to firewall or network restrictions');
     } else if (error.message.includes('Invalid login')) {
-      console.error('🔴 Invalid login credentials - check username and password');
-      throw new Error('Invalid Gmail credentials. Please check your email and App Password.');
+      console.error('🔴 [sendEmail] Invalid login credentials - check username and password');
     } else if (error.message.includes('Application-specific password required')) {
-      console.error('🔴 Gmail requires App Password, not regular password');
-      throw new Error('Gmail requires an App Password, not your regular password. Please generate an App Password from your Google Account settings.');
+      console.error('🔴 [sendEmail] Gmail requires App Password, not regular password');
     }
 
-    throw error;
+    throw new Error(errorMessage);
   }
 }
 
@@ -112,6 +123,20 @@ export default async function handler(req, res) {
         message: 'Missing required fields'
       });
     }
+
+    // Validate environment variables before proceeding
+    const requiredEnvVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'ORDER_EMAIL_FROM', 'ORDER_NOTIFICATIONS_EMAIL'];
+    const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+    if (missingEnvVars.length > 0) {
+      console.error('Missing environment variables:', missingEnvVars);
+      return res.status(500).json({
+        success: false,
+        message: 'Server configuration error. Please contact support.'
+      });
+    }
+
+    console.log('Environment variables validated successfully');
 
     // First send response to client
     const response = {
