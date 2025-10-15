@@ -34,7 +34,7 @@ async function sendEmail(to, subject, text, html) {
 // Export the Express app for Vercel
 export default async (req, res) => {
   if (req.method === 'POST' && req.url === '/api/mock/book') {
-    const { name, email, service } = req.body;
+    const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
     res.status(200).json({
       success: true,
       message: 'Booking submitted successfully',
@@ -44,12 +44,12 @@ export default async (req, res) => {
       await sendEmail(
         process.env.ORDER_NOTIFICATIONS_EMAIL,
         'New Booking Received',
-        `New booking from ${name} for ${service}. Contact: ${email}`,
-        `<h2>New Booking Received</h2><p><strong>Name:</strong> ${name}</p><p><strong>Service:</strong> ${service}</p><p><strong>Email:</strong> ${email}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`
+        `New booking from ${name} for ${service}. Contact: ${email}. Phone: ${phone}. Project: ${projectDetails}. Start Date: ${startDate}. Currency: ${currency}`,
+        `<h2>New Booking Received</h2><p><strong>Name:</strong> ${name}</p><p><strong>Service:</strong> ${service}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Project Details:</strong> ${projectDetails}</p><p><strong>Start Date:</strong> ${startDate}</p><p><strong>Currency:</strong> ${currency}</p><p><strong>Timestamp:</strong> ${timestamp}</p>`
       );
     }
   } else if (req.method === 'POST' && req.url === '/api/mock/quote') {
-    const { name, email, service } = req.body;
+    const { name, email, phone, budgetMin, budgetMax, projectDetails, currency, service, serviceId, timestamp } = req.body;
     res.status(200).json({
       success: true,
       message: 'Quote request submitted successfully',
@@ -59,12 +59,12 @@ export default async (req, res) => {
       await sendEmail(
         process.env.ORDER_NOTIFICATIONS_EMAIL,
         'New Quote Request',
-        `New quote request from ${name} for ${service}. Contact: ${email}`,
-        `<h2>New Quote Request</h2><p><strong>Name:</strong> ${name}</p><p><strong>Service:</strong> ${service}</p><p><strong>Email:</strong> ${email}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`
+        `New quote request from ${name} for ${service}. Contact: ${email}. Budget: ${budgetMin}-${budgetMax}. Project: ${projectDetails}`,
+        `<h2>New Quote Request</h2><p><strong>Name:</strong> ${name}</p><p><strong>Service:</strong> ${service}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Budget Range:</strong> ${budgetMin} - ${budgetMax}</p><p><strong>Project Details:</strong> ${projectDetails}</p><p><strong>Currency:</strong> ${currency}</p><p><strong>Timestamp:</strong> ${timestamp}</p>`
       );
     }
   } else if (req.method === 'POST' && req.url === '/api/mock/contact') {
-    const { name, email, message } = req.body;
+    const { name, email, phone, subject, message, timestamp } = req.body;
     res.status(200).json({
       success: true,
       message: 'Contact form submitted successfully',
@@ -75,8 +75,8 @@ export default async (req, res) => {
       await sendEmail(
         process.env.ORDER_NOTIFICATIONS_EMAIL,
         'New Contact Form Submission',
-        `New contact from ${name}. Message: ${message}. Contact: ${email}`,
-        `<h2>New Contact Form Submission</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong> ${message}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`
+        `New contact from ${name}. Subject: ${subject}. Message: ${message}. Contact: ${email}`,
+        `<h2>New Contact Form Submission</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone}</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong> ${message}</p><p><strong>Timestamp:</strong> ${timestamp}</p>`
       );
       // Send confirmation to the user
       await sendEmail(
@@ -101,4 +101,7 @@ export default async (req, res) => {
         `<h2>New Newsletter Subscription</h2><p><strong>Email:</strong> ${email}</p><p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>`
       );
     }
+  } else {
+    res.status(404).json({ error: 'Not found' });
+  }
 };
