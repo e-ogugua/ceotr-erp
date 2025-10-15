@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-// Configure nodemailer transporter with multiple Gmail-optimized settings
+// Configure nodemailer transporter with advanced Gmail-specific settings
 const createGmailTransporter = () => {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -15,38 +15,44 @@ const createGmailTransporter = () => {
       pass: process.env.SMTP_PASS,
     },
     tls: {
-      // Gmail specific TLS settings - try multiple approaches
-      ciphers: 'SSLv3',
+      // Advanced TLS settings for Gmail compatibility
+      ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!RC4:!MD5:!DSS',
       rejectUnauthorized: false,
-      // Alternative TLS settings to try
+      // Enable all TLS versions that Gmail might support
       minVersion: 'TLSv1',
-      maxVersion: 'TLSv1.2'
+      maxVersion: 'TLSv1.3',
+      // Server name indication for proper certificate validation
+      servername: 'smtp.gmail.com'
     },
-    // Connection settings optimized for serverless
-    connectionTimeout: 15000, // Reduced for faster failure
-    greetingTimeout: 10000,   // Reduced for faster failure
-    socketTimeout: 15000,     // Reduced for faster failure
+    // Connection settings optimized for serverless with Gmail
+    connectionTimeout: 10000,  // Reduced for faster failure detection
+    greetingTimeout: 8000,     // Reduced for faster failure detection
+    socketTimeout: 10000,      // Reduced for faster failure detection
 
-    // Disable features that cause issues in serverless
-    pool: false,              // Disable connection pooling
-    keepAlive: false,         // Disable keep-alive
-    maxConnections: 1,        // Limit to 1 connection
-    maxMessages: 1,           // Limit to 1 message per connection
+    // Enable connection pooling with strict limits for serverless
+    pool: true,                // Enable pooling for better performance
+    maxConnections: 1,         // Limit to 1 connection per function
+    maxMessages: 3,            // Allow up to 3 messages per connection
+    rateLimit: 1,              // 1 message per second
+    rateDelta: 1000,           // 1 second between messages
 
-    // Rate limiting for serverless environment
-    rateLimit: 1,             // 1 message per second
-    rateDelta: 1000,          // 1 second between messages
+    // Disable keep-alive to avoid stale connections
+    keepAlive: false,
 
     // Debug settings for troubleshooting
     debug: process.env.NODE_ENV === 'development',
-    logger: process.env.NODE_ENV === 'development'
+    logger: process.env.NODE_ENV === 'development',
+
+    // Additional Gmail-specific settings
+    service: 'gmail',          // Use Gmail service for better defaults
+    authMethod: 'LOGIN'        // Specify auth method explicitly
   });
 };
 
 // Global transporter instance
 const transporter = createGmailTransporter();
 
-// Function to send email with retry logic
+// Function to send email with advanced retry logic for Gmail
 async function sendEmail(to, subject, text, html, maxRetries = 3) {
   console.log(`🔵 [sendEmail] Attempting to send email...`);
   console.log(`🔵 [sendEmail] Recipient: ${to}`);
@@ -78,15 +84,34 @@ async function sendEmail(to, subject, text, html, maxRetries = 3) {
         hasHtml: !!mailOptions.html
       });
 
-      // Create a promise with timeout
-      const emailPromise = transporter.sendMail(mailOptions);
-      const timeoutPromise = new Promise((_, reject) => {
+      // Create new transporter for each attempt to avoid stale connections
+      const freshTransporter = createGmailTransporter();
+
+      // Create a promise with multiple timeout strategies
+      const emailPromise = freshTransporter.sendMail(mailOptions);
+
+      // Multiple timeout promises for different failure scenarios
+      const connectionTimeout = new Promise((_, reject) => {
         setTimeout(() => {
-          reject(new Error(`Email sending timeout - attempt ${attempt} took too long`));
-        }, 20000); // 20 second timeout
+          reject(new Error(`Connection timeout - attempt ${attempt} - Gmail not responding`));
+        }, 15000); // 15 second connection timeout
       });
 
-      const info = await Promise.race([emailPromise, timeoutPromise]);
+      const greetingTimeout = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Greeting timeout - attempt ${attempt} - SMTP handshake failed`));
+        }, 12000); // 12 second greeting timeout
+      });
+
+      const socketTimeout = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Socket timeout - attempt ${attempt} - Network issue`));
+        }, 10000); // 10 second socket timeout
+      });
+
+      // Race all timeout promises against the email promise
+      const info = await Promise.race([emailPromise, connectionTimeout, greetingTimeout, socketTimeout]);
+
       console.log('🟢 [sendEmail] Email sent successfully:', {
         messageId: info.messageId,
         accepted: info.accepted,
@@ -104,13 +129,39 @@ async function sendEmail(to, subject, text, html, maxRetries = 3) {
         stack: error.stack
       });
 
+      // Enhanced error analysis for Gmail-specific issues
+      if (error.message.includes('timeout') || error.message.includes('Timeout')) {
+        console.error(`🔴 [sendEmail] Gmail timeout issue - attempt ${attempt}`);
+        if (attempt === 1) {
+          console.error('🔴 [sendEmail] First attempt timed out - Gmail may be blocking this connection');
+          console.error('🔴 [sendEmail] This is common with serverless platforms like Vercel');
+        } else if (attempt === 2) {
+          console.error('🔴 [sendEmail] Second attempt timed out - persistent network issue');
+          console.error('🔴 [sendEmail] Gmail SMTP servers may be throttling this connection');
+        } else {
+          console.error('🔴 [sendEmail] All attempts timed out - Gmail SMTP not compatible with this serverless environment');
+          console.error('🔴 [sendEmail] RECOMMENDATION: Switch to SendGrid, Mailgun, or AWS SES for reliable serverless email delivery');
+        }
+      } else if (error.code === 'ECONNECTION') {
+        console.error('🔴 [sendEmail] Connection refused by Gmail SMTP server');
+        console.error('🔴 [sendEmail] Gmail may be blocking connections from this serverless environment');
+        console.error('🔴 [sendEmail] SOLUTION: Use SendGrid instead - it is designed for serverless platforms');
+      } else if (error.code === 'EAUTH') {
+        console.error('🔴 [sendEmail] Authentication failed - check Gmail app password');
+        console.error('🔴 [sendEmail] Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
+      } else if (error.message.includes('Greeting never received')) {
+        console.error('🔴 [sendEmail] SMTP server not responding to initial connection');
+        console.error('🔴 [sendEmail] Gmail firewall is likely blocking this serverless connection');
+        console.error('🔴 [sendEmail] ALTERNATIVE: Use SendGrid - works reliably with Vercel serverless functions');
+      }
+
       // If this is the last attempt, throw the error
       if (attempt === maxRetries) {
         throw error;
       }
 
       // Wait before retrying with exponential backoff
-      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Max 5 seconds
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 3000); // Max 3 seconds
       console.log(`🔵 [sendEmail] Waiting ${delay}ms before retry...`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
