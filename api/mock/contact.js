@@ -18,10 +18,17 @@ const transporter = nodemailer.createTransport({
     ciphers: 'SSLv3',
     rejectUnauthorized: false
   },
-  // Additional settings for better reliability
-  connectionTimeout: 60000,
-  greetingTimeout: 30000,
-  socketTimeout: 60000
+  // Additional settings for better reliability with serverless platforms
+  connectionTimeout: 30000, // Reduced from 60000
+  greetingTimeout: 15000,  // Reduced from 30000
+  socketTimeout: 30000,    // Reduced from 60000
+  // Disable pooling to avoid connection reuse issues
+  pool: false,
+  // Use direct connection without keep-alive
+  keepAlive: false,
+  // Debug mode for troubleshooting
+  debug: process.env.NODE_ENV === 'development',
+  logger: process.env.NODE_ENV === 'development'
 });
 
 // Function to send email
@@ -74,18 +81,26 @@ async function sendEmail(to, subject, text, html) {
 
     // More specific error handling for Gmail issues
     if (error.code === 'EAUTH') {
-      console.error('🔴 [sendEmail] Authentication failed - check SMTP credentials and App Password');
-      console.error('🔴 [sendEmail] Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
+      console.error('🔴 Authentication failed - check SMTP credentials and App Password');
+      console.error('🔴 Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
+      console.error('🔴 Alternative: Consider using SendGrid, Mailgun, or AWS SES for better serverless compatibility');
     } else if (error.code === 'ECONNECTION') {
-      console.error('🔴 [sendEmail] Connection to SMTP server failed - check host and port');
-      console.error('🔴 [sendEmail] SMTP Settings should be: smtp.gmail.com:587');
+      console.error('🔴 Connection to SMTP server failed - check host and port');
+      console.error('🔴 SMTP Settings should be: smtp.gmail.com:587');
+      console.error('🔴 Alternative: Gmail SMTP may be blocked by serverless platforms. Try SendGrid instead.');
     } else if (error.code === 'ETIMEDOUT') {
-      console.error('🔴 [sendEmail] Connection to SMTP server timed out');
-      console.error('🔴 [sendEmail] This may be due to firewall or network restrictions');
+      console.error('🔴 Connection to SMTP server timed out');
+      console.error('🔴 This may be due to firewall or network restrictions');
+      console.error('🔴 Gmail SMTP often times out on serverless platforms like Vercel');
+      console.error('🔴 RECOMMENDED SOLUTION: Switch to SendGrid, Mailgun, or AWS SES');
+      console.error('🔴 These services are designed for cloud/serverless environments');
     } else if (error.message.includes('Invalid login')) {
-      console.error('🔴 [sendEmail] Invalid login credentials - check username and password');
+      console.error('🔴 Invalid login credentials - check username and password');
     } else if (error.message.includes('Application-specific password required')) {
-      console.error('🔴 [sendEmail] Gmail requires App Password, not regular password');
+      console.error('🔴 Gmail requires App Password, not regular password');
+    } else if (error.message.includes('Greeting never received')) {
+      console.error('🔴 SMTP server not responding - likely blocked by Gmail firewall');
+      console.error('🔴 SOLUTION: Use a professional email service like SendGrid instead of Gmail');
     }
 
     throw new Error(errorMessage);
