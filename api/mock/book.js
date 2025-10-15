@@ -38,10 +38,54 @@ transporter.verify(function(error, success) {
 
 // Function to send email
 async function sendEmail(to, subject, text, html) {
-  console.log(`Attempting to send email to: ${to}`);
-  console.log(`Using SMTP server: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
+  console.log('🔵 [sendEmail] Attempting to send email...');
+  console.log('🔵 [sendEmail] Recipient:', to);
+  console.log('🔵 [sendEmail] SMTP Config:', {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER ? '***' : 'Not set',
+    pass: process.env.SMTP_PASS ? '***' : 'Not set',
+    from: process.env.ORDER_EMAIL_FROM
+  });
+
+  // Validate required environment variables
+  const requiredVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'ORDER_EMAIL_FROM'];
+  const missingVars = requiredVars.filter(varName => !process.env[varName]);
+  
+  if (missingVars.length > 0) {
+    const error = new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    console.error('🔴 [sendEmail] Configuration error:', error.message);
+    throw error;
+  }
   
   try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT, 10),
+      secure: process.env.SMTP_PORT === '465', // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      tls: {
+        // Do not fail on invalid certs
+        rejectUnauthorized: false
+      }
+    });
+
+    // Verify transporter configuration
+    await new Promise((resolve, reject) => {
+      transporter.verify(function(error, success) {
+        if (error) {
+          console.error('🔴 [sendEmail] SMTP Connection Error:', error);
+          reject(new Error(`SMTP connection failed: ${error.message}`));
+        } else {
+          console.log('🟢 [sendEmail] SMTP Server is ready to take our messages');
+          resolve();
+        }
+      });
+    });
+
     const mailOptions = {
       from: process.env.ORDER_EMAIL_FROM,
       to,
@@ -50,7 +94,7 @@ async function sendEmail(to, subject, text, html) {
       html,
     };
     
-    console.log('Sending email with options:', {
+    console.log('🔵 [sendEmail] Sending email with options:', {
       from: mailOptions.from,
       to: mailOptions.to,
       subject: mailOptions.subject,
@@ -59,17 +103,29 @@ async function sendEmail(to, subject, text, html) {
     });
     
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.messageId);
+    console.log('🟢 [sendEmail] Email sent successfully:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error sending email:', {
+    const errorMessage = `Failed to send email: ${error.message}`;
+    console.error('🔴 [sendEmail] Error:', {
       name: error.name,
       message: error.message,
       code: error.code,
       stack: error.stack,
-      response: error.response
+      response: error.response,
+      smtpError: error.smtp ? error.smtp.response : undefined
     });
-    throw error; // Re-throw to handle in the calling function
+    
+    // More specific error handling
+    if (error.code === 'EAUTH') {
+      console.error('🔴 [sendEmail] Authentication failed - check SMTP credentials');
+    } else if (error.code === 'ECONNECTION') {
+      console.error('🔴 [sendEmail] Connection to SMTP server failed - check host and port');
+    } else if (error.code === 'ETIMEDOUT') {
+      console.error('🔴 [sendEmail] Connection to SMTP server timed out');
+    }
+    
+    throw new Error(errorMessage);
   }
 }
 
