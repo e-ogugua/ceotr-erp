@@ -1,5 +1,7 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Debug log environment variables
 console.log('Environment Variables:', {
@@ -73,6 +75,13 @@ async function sendEmail(to, subject, text, html) {
 
 // Vercel serverless function
 export default async function handler(req, res) {
+  console.log('API Request Headers:', req.headers);
+  console.log('API Request Body:', req.body);
+  console.log('Environment Variables:', {
+    SMTP_HOST: process.env.SMTP_HOST ? 'Set' : 'Not set',
+    NODE_ENV: process.env.NODE_ENV || 'development'
+  });
+
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
