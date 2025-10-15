@@ -4,35 +4,50 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-// Configure nodemailer transporter with Gmail-optimized settings
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || '587', 10),
-  secure: process.env.SMTP_PORT === '465', // Use SSL for port 465
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    // Gmail specific TLS settings
-    ciphers: 'SSLv3',
-    rejectUnauthorized: false
-  },
-  // Additional settings for better reliability with serverless platforms
-  connectionTimeout: 30000, // Reduced from 60000
-  greetingTimeout: 15000,  // Reduced from 30000
-  socketTimeout: 30000,    // Reduced from 60000
-  // Disable pooling to avoid connection reuse issues
-  pool: false,
-  // Use direct connection without keep-alive
-  keepAlive: false,
-  // Debug mode for troubleshooting
-  debug: process.env.NODE_ENV === 'development',
-  logger: process.env.NODE_ENV === 'development'
-});
+// Configure nodemailer transporter with multiple Gmail-optimized settings
+const createGmailTransporter = () => {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    secure: process.env.SMTP_PORT === '465', // Use SSL for port 465
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: {
+      // Gmail specific TLS settings - try multiple approaches
+      ciphers: 'SSLv3',
+      rejectUnauthorized: false,
+      // Alternative TLS settings to try
+      minVersion: 'TLSv1',
+      maxVersion: 'TLSv1.2'
+    },
+    // Connection settings optimized for serverless
+    connectionTimeout: 15000, // Reduced for faster failure
+    greetingTimeout: 10000,   // Reduced for faster failure
+    socketTimeout: 15000,     // Reduced for faster failure
 
-// Function to send email
-async function sendEmail(to, subject, text, html) {
+    // Disable features that cause issues in serverless
+    pool: false,              // Disable connection pooling
+    keepAlive: false,         // Disable keep-alive
+    maxConnections: 1,        // Limit to 1 connection
+    maxMessages: 1,           // Limit to 1 message per connection
+
+    // Rate limiting for serverless environment
+    rateLimit: 1,             // 1 message per second
+    rateDelta: 1000,          // 1 second between messages
+
+    // Debug settings for troubleshooting
+    debug: process.env.NODE_ENV === 'development',
+    logger: process.env.NODE_ENV === 'development'
+  });
+};
+
+// Global transporter instance
+const transporter = createGmailTransporter();
+
+// Function to send email with retry logic
+async function sendEmail(to, subject, text, html, maxRetries = 3) {
   console.log(`🔵 [sendEmail] Attempting to send email...`);
   console.log(`🔵 [sendEmail] Recipient: ${to}`);
   console.log(`🔵 [sendEmail] Subject: ${subject}`);
@@ -43,75 +58,62 @@ async function sendEmail(to, subject, text, html) {
     from: process.env.ORDER_EMAIL_FROM
   });
 
-  try {
-    const mailOptions = {
-      from: process.env.ORDER_EMAIL_FROM,
-      to,
-      subject,
-      text,
-      html,
-    };
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔵 [sendEmail] Attempt ${attempt}/${maxRetries}`);
 
-    console.log('🔵 [sendEmail] Sending email with options:', {
-      from: mailOptions.from,
-      to: mailOptions.to,
-      subject: mailOptions.subject,
-      hasText: !!mailOptions.text,
-      hasHtml: !!mailOptions.html
-    });
+      const mailOptions = {
+        from: process.env.ORDER_EMAIL_FROM,
+        to,
+        subject,
+        text,
+        html,
+      };
 
-    // Create a promise with timeout
-    const emailPromise = transporter.sendMail(mailOptions);
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error('Email sending timeout - operation took too long'));
-      }, 25000); // 25 second timeout
-    });
+      console.log('🔵 [sendEmail] Sending email with options:', {
+        from: mailOptions.from,
+        to: mailOptions.to,
+        subject: mailOptions.subject,
+        hasText: !!mailOptions.text,
+        hasHtml: !!mailOptions.html
+      });
 
-    const info = await Promise.race([emailPromise, timeoutPromise]);
-    console.log('🟢 [sendEmail] Email sent successfully:', {
-      messageId: info.messageId,
-      accepted: info.accepted,
-      rejected: info.rejected,
-      response: info.response
-    });
-    return { success: true, messageId: info.messageId };
-  } catch (error) {
-    const errorMessage = `Failed to send email: ${error.message}`;
-    console.error('🔴 [sendEmail] Error:', {
-      name: error.name,
-      message: error.message,
-      code: error.code,
-      stack: error.stack,
-      response: error.response,
-      smtpError: error.smtp ? error.smtp.response : undefined
-    });
+      // Create a promise with timeout
+      const emailPromise = transporter.sendMail(mailOptions);
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Email sending timeout - attempt ${attempt} took too long`));
+        }, 20000); // 20 second timeout
+      });
 
-    // Enhanced error handling for Gmail issues
-    if (error.code === 'EAUTH') {
-      console.error('🔴 Authentication failed - check SMTP credentials and App Password');
-      console.error('🔴 Gmail App Password Setup: https://support.google.com/accounts/answer/185833');
-      console.error('🔴 Alternative: Consider using SendGrid, Mailgun, or AWS SES for better serverless compatibility');
-    } else if (error.code === 'ECONNECTION') {
-      console.error('🔴 Connection to SMTP server failed - check host and port');
-      console.error('🔴 SMTP Settings should be: smtp.gmail.com:587');
-      console.error('🔴 Alternative: Gmail SMTP may be blocked by serverless platforms. Try SendGrid instead.');
-    } else if (error.code === 'ETIMEDOUT' || error.message.includes('timeout') || error.message.includes('Timeout')) {
-      console.error('🔴 Connection to SMTP server timed out');
-      console.error('🔴 This may be due to firewall or network restrictions');
-      console.error('🔴 Gmail SMTP often times out on serverless platforms like Vercel');
-      console.error('🔴 RECOMMENDED SOLUTION: Switch to SendGrid, Mailgun, or AWS SES');
-      console.error('🔴 These services are designed for cloud/serverless environments');
-    } else if (error.message.includes('Greeting never received')) {
-      console.error('🔴 SMTP server not responding - likely blocked by Gmail firewall');
-      console.error('🔴 SOLUTION: Use a professional email service like SendGrid instead of Gmail');
-    } else if (error.message.includes('Invalid login')) {
-      console.error('🔴 Invalid login credentials - check username and password');
-    } else if (error.message.includes('Application-specific password required')) {
-      console.error('🔴 Gmail requires App Password, not regular password');
+      const info = await Promise.race([emailPromise, timeoutPromise]);
+      console.log('🟢 [sendEmail] Email sent successfully:', {
+        messageId: info.messageId,
+        accepted: info.accepted,
+        rejected: info.rejected,
+        response: info.response,
+        attempt: attempt
+      });
+      return { success: true, messageId: info.messageId };
+
+    } catch (error) {
+      console.error(`🔴 [sendEmail] Attempt ${attempt} failed:`, {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+
+      // If this is the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Wait before retrying with exponential backoff
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Max 5 seconds
+      console.log(`🔵 [sendEmail] Waiting ${delay}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
-
-    throw new Error(errorMessage);
   }
 }
 
