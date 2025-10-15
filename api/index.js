@@ -1,8 +1,5 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 // Configure nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -31,8 +28,7 @@ async function sendEmail(to, subject, text, html) {
   }
 }
 
-// Export the Express app for Vercel
-export default async (req, res) => {
+module.exports = async (req, res) => {
   if (req.method === 'POST' && req.url === '/api/mock/book') {
     const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
 
