@@ -3,29 +3,35 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Debug log environment variables
-console.log('Environment Variables:', {
-  SMTP_HOST: process.env.SMTP_HOST ? 'Set' : 'Not set',
-  SMTP_PORT: process.env.SMTP_PORT || 'Not set',
-  SMTP_USER: process.env.SMTP_USER ? 'Set' : 'Not set',
-  SMTP_PASS: process.env.SMTP_PASS ? 'Set' : 'Not set',
-  NODE_ENV: process.env.NODE_ENV || 'development'
-});
+// Enhanced SMTP configuration for Gmail
+const createTransporter = () => {
+  const config = {
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10),
+    secure: process.env.SMTP_PORT === '465',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: {
+      // Gmail specific TLS settings
+      ciphers: 'SSLv3',
+      rejectUnauthorized: false,
+      servername: process.env.SMTP_HOST
+    },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 15000,
+    // Debug mode for troubleshooting
+    debug: true,
+    logger: true
+  };
 
-// Configure nodemailer transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || '587', 10),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    // Do not fail on invalid certs
-    rejectUnauthorized: false
-  }
-});
+  return nodemailer.createTransport(config);
+};
+
+// Global transporter instance
+const transporter = createTransporter();
 
 // Verify transporter configuration
 transporter.verify(function(error, success) {
@@ -59,23 +65,12 @@ async function sendEmail(to, subject, text, html) {
   }
   
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT, 10),
-      secure: process.env.SMTP_PORT === '465', // true for 465, false for other ports
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      tls: {
-        // Do not fail on invalid certs
-        rejectUnauthorized: false
-      }
-    });
+    // Create fresh transporter for each email attempt
+    const emailTransporter = createTransporter();
 
-    // Verify transporter configuration
+    // Test connection before sending
     await new Promise((resolve, reject) => {
-      transporter.verify(function(error, success) {
+      emailTransporter.verify(function(error, success) {
         if (error) {
           console.error('🔴 [sendEmail] SMTP Connection Error:', error);
           reject(new Error(`SMTP connection failed: ${error.message}`));
@@ -102,7 +97,7 @@ async function sendEmail(to, subject, text, html) {
       hasHtml: !!mailOptions.html
     });
     
-    const info = await transporter.sendMail(mailOptions);
+    const info = await emailTransporter.sendMail(mailOptions);
     console.log('🟢 [sendEmail] Email sent successfully:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
@@ -116,13 +111,17 @@ async function sendEmail(to, subject, text, html) {
       smtpError: error.smtp ? error.smtp.response : undefined
     });
     
-    // More specific error handling
+    // More specific error handling for Gmail issues
     if (error.code === 'EAUTH') {
-      console.error('🔴 [sendEmail] Authentication failed - check SMTP credentials');
+      console.error('🔴 [sendEmail] Authentication failed - check SMTP credentials and App Password');
     } else if (error.code === 'ECONNECTION') {
       console.error('🔴 [sendEmail] Connection to SMTP server failed - check host and port');
     } else if (error.code === 'ETIMEDOUT') {
       console.error('🔴 [sendEmail] Connection to SMTP server timed out');
+    } else if (error.message.includes('Invalid login')) {
+      console.error('🔴 [sendEmail] Invalid login credentials - check username and password');
+    } else if (error.message.includes('Application-specific password required')) {
+      console.error('🔴 [sendEmail] Gmail requires App Password, not regular password');
     }
     
     throw new Error(errorMessage);
