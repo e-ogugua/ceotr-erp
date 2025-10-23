@@ -1,10 +1,10 @@
 # CEOTR Ltd ERP Suite - API Documentation
 
-## 📋 Overview
+## Overview
 
 The CEOTR Ltd ERP Suite includes a comprehensive mock API server that simulates real backend functionality for development and testing purposes.
 
-## 🚀 API Endpoints
+## API Endpoints
 
 ### Base URL
 ```
@@ -12,7 +12,7 @@ Development: http://localhost:3001/api
 Production: https://ceotr-ltd-erp-suite.vercel.app/api
 ```
 
-### 📊 Analytics Endpoints
+### Analytics Endpoints
 
 #### GET /api/analytics
 Retrieves real-time business analytics data.
@@ -48,7 +48,7 @@ Retrieves real-time business analytics data.
 }
 ```
 
-### 📝 Booking Endpoints
+### Booking Endpoints
 
 #### POST /api/booking
 Submits a new booking request for services.
@@ -78,7 +78,7 @@ Submits a new booking request for services.
 }
 ```
 
-### 💰 Quote Endpoints
+### Quote Endpoints
 
 #### POST /api/quote
 Submits a quote request for services.
@@ -110,7 +110,7 @@ Submits a quote request for services.
 }
 ```
 
-### 🔍 Health Check Endpoints
+### Health Check Endpoints
 
 #### GET /api/health
 Basic health check endpoint for monitoring.
@@ -125,7 +125,7 @@ Basic health check endpoint for monitoring.
 }
 ```
 
-## 🔧 API Configuration
+## API Configuration
 
 ### Mock Data
 All API responses use mock data defined in:
@@ -146,7 +146,7 @@ The API includes comprehensive error handling:
 - **500 Internal Server Error** - Server errors
 - **Validation errors** - Input validation failures
 
-## 📊 Data Models
+## Data Models
 
 ### Project Model
 ```javascript
@@ -196,7 +196,7 @@ The API includes comprehensive error handling:
 }
 ```
 
-## 🔒 Security Considerations
+## Security Considerations
 
 ### Input Validation
 - All inputs are validated and sanitized
@@ -223,7 +223,7 @@ NODE_ENV=production
 VERCEL_URL=https://ceotr-ltd-erp-suite.vercel.app
 ```
 
-## 🧪 Testing the API
+## Testing the API
 
 ### Using cURL
 ```bash
@@ -255,7 +255,7 @@ const submitBooking = async (bookingData) => {
 };
 ```
 
-## 🚀 Production Considerations
+## Production Considerations
 
 ### Real Backend Integration
 When integrating with a real backend:
@@ -272,7 +272,7 @@ When integrating with a real backend:
 - **API usage logging** for analytics
 - **User interaction tracking**
 
-## 📈 API Performance
+## API Performance
 
 ### Response Times
 - **Health checks:** < 50ms
@@ -284,7 +284,7 @@ When integrating with a real backend:
 - **API responses:** Browser caching where appropriate
 - **Images:** Optimized with WebP fallbacks
 
-## 🔧 Development
+## Development
 
 ### Adding New Endpoints
 1. Add endpoint in `server.js`
@@ -299,4 +299,4 @@ Current API version: v1
 
 ---
 
-**API Documentation Version:** 2.0.0 | Last Updated: January 2025
+**CEOTR Ltd ERP Suite — Developed by CEO – Chukwuka Emmanuel Ogugua.**

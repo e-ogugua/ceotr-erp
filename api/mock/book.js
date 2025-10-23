@@ -104,7 +104,7 @@ export default async function handler(req, res) {
   try {
     console.log('Booking form submission received');
 
-    const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
+    const { name, email, phone, projectDetails, startDate, currency, service, timestamp } = req.body;
 
     if (!name || !email || !service) {
       return res.status(400).json({
@@ -199,4 +199,4 @@ CEOTR Ltd Team`,
     console.error('Booking API Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-};
+}

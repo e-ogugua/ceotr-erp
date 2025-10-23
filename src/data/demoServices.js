@@ -1,3 +1,19 @@
+/**
+ * demoServices.js - Demo data and configuration for CEOTR Ltd ERP Suite
+ *
+ * This file contains mock data for services, projects, team members, testimonials,
+ * and company information. It serves as the data layer for the application,
+ * providing realistic sample content for development and demonstration purposes.
+ *
+ * The data includes:
+ * - Service catalog with pricing and features
+ * - Project portfolio with galleries and details
+ * - Team member profiles and information
+ * - Client testimonials and ratings
+ * - Company information and contact details
+ *
+ * @fileoverview Demo data and configuration constants
+ */
 import { getPriceRange } from '../config/currency.js';
 
 export const DEMO_SERVICES = [
@@ -212,7 +228,7 @@ export const DEMO_TEAM = [
     name: 'Chukwuka Emmanuel Ogugua',
     position: 'Executive Director',
     bio: 'Emmanuel is an IT enthusiast, entrepreneur, and farmer with over a decade of experience in contracting, technology, and business development. He founded CEOTR Ltd to merge smart business strategies with solid execution.',
-    photo: '/images/team/CEO.png',
+    photo: '/images/team/shortAboutSideimage1.png',
     linkedin: 'https://linkedin.com/in/emmanuelogugua'
   },
   {
@@ -247,7 +263,7 @@ export const DEMO_TESTIMONIALS = [
 export const COMPANY_INFO = {
   name: 'CEOTR Ltd',
   fullName: 'CEO Transnational Resources Limited',
-  tagline: 'Discover Excellence!',
+  tagline: 'Discover Excellence',
   founded: '2015',
   headquarters: 'Enugu, Nigeria',
   phone: ['+234 806 450 8595', '+234 806 900 9116'],

@@ -1,32 +1,67 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * Hero.jsx - Main landing section component for CEOTR Ltd ERP Suite
+ *
+ * This component displays the main hero section with rotating background images,
+ * company information, and call-to-action buttons. It provides an overview of
+ * the company's services and capabilities in a professional presentation.
+ *
+ * Features:
+ * - Auto-rotating background images with smooth transitions
+ * - Responsive layout for all device sizes
+ * - Professional service showcase with company metrics
+ * - Call-to-action buttons with smooth scrolling
+ * - Trust indicators and company credentials
+ *
+ * Performance Optimizations:
+ * - React.memo to prevent unnecessary re-renders when props haven't changed
+ * - useMemo for expensive calculations like feature arrays
+ * - useCallback for event handlers to prevent child component re-renders
+ * - Lazy loading for background images with proper error handling
+ * - Optimized animation timing and reduced motion support
+ *
+ * @returns {JSX.Element} The hero section component
+ */
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { ArrowRight, CheckCircle, Star, Award, Sparkles, Zap } from 'lucide-react';
 import { COMPANY_INFO } from '../data/demoServices';
 
-const Hero = () => {
+const Hero = memo(() => {
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
-  const heroBackgrounds = [
+  // Memoized background images array to prevent recreation on every render
+  const heroBackgrounds = useMemo(() => [
     '/images/hero/hero-background.png',
     '/images/hero/Hero-background2.png'
-  ];
+  ], []);
 
   useEffect(() => {
+    // Auto-rotate background images with controlled interval
     const interval = setInterval(() => {
       setCurrentBgIndex((prevIndex) => (prevIndex + 1) % heroBackgrounds.length);
     }, 8000); // Change background every 8 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [heroBackgrounds.length]); // Include length in dependency for safety
 
-  const features = [
+  // Memoized features array to prevent recreation on every render
+  const features = useMemo(() => [
     { icon: <CheckCircle size={20} />, text: 'Professional Excellence' },
     { icon: <Star size={20} />, text: 'Quality Assured' },
     { icon: <Award size={20} />, text: 'Industry Leaders' }
-  ];
+  ], []);
+
+  // Memoized scroll handlers to prevent recreation on every render
+  const scrollToServices = useCallback(() => {
+    document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  const scrollToPortfolio = useCallback(() => {
+    document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
     <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-primary-50/20 via-blue-50/30 to-indigo-100/20">
-      {/* Dynamic Background Images */}
+      {/* Dynamic Background Images with optimized loading */}
       <div className="absolute inset-0">
         {heroBackgrounds.map((bg, index) => (
           <div
@@ -130,19 +165,19 @@ const Hero = () => {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Service cards mockup */}
                   <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-4 text-white">
-                    <div className="text-sm font-semibold mb-2">🏗️ Construction</div>
+                    <div className="text-sm font-semibold mb-2">Construction</div>
                     <div className="text-xs opacity-90">Quality builds</div>
                   </div>
                   <div className="bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl p-4 text-white">
-                    <div className="text-sm font-semibold mb-2">💻 IT Services</div>
+                    <div className="text-sm font-semibold mb-2">IT Services</div>
                     <div className="text-xs opacity-90">Tech solutions</div>
                   </div>
                   <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
-                    <div className="text-sm font-semibold mb-2">📊 Consulting</div>
+                    <div className="text-sm font-semibold mb-2">Consulting</div>
                     <div className="text-xs opacity-90">Business growth</div>
                   </div>
                   <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
-                    <div className="text-sm font-semibold mb-2">🚀 Software</div>
+                    <div className="text-sm font-semibold mb-2">Software</div>
                     <div className="text-xs opacity-90">Custom apps</div>
                   </div>
                 </div>
@@ -163,6 +198,6 @@ const Hero = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Hero;

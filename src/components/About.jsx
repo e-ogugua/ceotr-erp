@@ -1,9 +1,25 @@
-import React from 'react';
-import { Award, Users, Target, Clock, Building, Briefcase, Server, Code, MapPin, Mail, Phone } from 'lucide-react';
+/**
+ * About.jsx - About section component for CEOTR Ltd ERP Suite
+ *
+ * This component displays company information, team members, statistics,
+ * and service overview. It provides a comprehensive view of the company's
+ * capabilities and team structure.
+ *
+ * Performance Optimizations:
+ * - React.memo to prevent unnecessary re-renders when props haven't changed
+ * - useMemo for expensive arrays (stats, services, values) to prevent recreation
+ * - Image optimization with lazy loading for team member photos
+ * - Optimized team member card rendering
+ *
+ * @returns {JSX.Element} The about section component
+ */
+import { memo, useMemo } from 'react';
+import { Award, Users, Target, Building, Briefcase, Server, Code, MapPin, Mail, Phone } from 'lucide-react';
 import { COMPANY_INFO, DEMO_TEAM } from '../data/demoServices';
 
-const About = () => {
-  const stats = [
+const About = memo(() => {
+  // Memoized stats array to prevent recreation on every render
+  const stats = useMemo(() => [
     {
       icon: <Building size={32} />,
       number: '50+',
@@ -28,9 +44,10 @@ const About = () => {
       label: 'Client Satisfaction',
       color: 'text-orange-600'
     }
-  ];
+  ], []);
 
-  const services = [
+  // Memoized services array for overview section
+  const services = useMemo(() => [
     {
       icon: <Building className="w-8 h-8" />,
       title: 'General Contracting',
@@ -55,9 +72,10 @@ const About = () => {
       description: 'Custom applications and web development',
       features: ['React/Node.js', 'Mobile apps', 'API integrations']
     }
-  ];
+  ], []);
 
-  const values = [
+  // Memoized company values array
+  const values = useMemo(() => [
     {
       icon: <Award className="w-6 h-6" />,
       title: 'Excellence',
@@ -73,7 +91,7 @@ const About = () => {
       title: 'Innovation',
       description: 'Embracing cutting-edge solutions'
     }
-  ];
+  ], []);
 
   return (
     <section id="about" className="py-16 md:py-24 bg-gradient-to-br from-neutral-50 to-neutral-100">
@@ -220,6 +238,7 @@ const About = () => {
                     src={member.photo}
                     alt={member.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy" // Lazy load team member images
                     onError={(e) => {
                       e.target.style.display = 'none';
                     }}
@@ -252,6 +271,6 @@ const About = () => {
       </div>
     </section>
   );
-};
+});
 
 export default About;

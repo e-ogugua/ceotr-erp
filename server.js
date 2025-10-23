@@ -42,7 +42,7 @@ async function sendEmail(to, subject, text, html) {
 
 // API Routes
 app.post('/api/mock/book', async (req, res) => {
-  const { name, email, phone, projectDetails, startDate, currency, service, serviceId, timestamp } = req.body;
+  const { name, email, phone, projectDetails, startDate, currency, service, timestamp } = req.body;
 
   res.status(200).json({
     success: true,
@@ -74,7 +74,7 @@ app.post('/api/mock/book', async (req, res) => {
 });
 
 app.post('/api/mock/quote', async (req, res) => {
-  const { name, email, phone, budgetMin, budgetMax, projectDetails, currency, service, serviceId, timestamp } = req.body;
+  const { name, email, phone, budgetMin, budgetMax, projectDetails, currency, service, timestamp } = req.body;
 
   res.status(200).json({
     success: true,

@@ -1,4 +1,28 @@
-import React, { useState, useContext } from 'react';
+/**
+ * Services.jsx - Service catalog component for CEOTR Ltd ERP Suite
+ *
+ * This component displays the company's service offerings with detailed information,
+ * pricing in multiple currencies, and integration with booking and quote systems.
+ * It includes client testimonials and call-to-action sections.
+ *
+ * Performance Optimizations:
+ * - React.memo to prevent unnecessary re-renders when props haven't changed
+ * - useMemo for expensive calculations and derived state
+ * - useCallback for event handlers to prevent child component re-renders
+ * - Optimized modal state management
+ * - Currency context integration with memoized calculations
+ *
+ * Features:
+ * - Professional service cards with pricing and features
+ * - Multi-currency pricing display
+ * - Client testimonials with ratings
+ * - Booking and quote modal integration
+ * - Responsive grid layout for all devices
+ * - Analytics dashboard integration
+ *
+ * @returns {JSX.Element} The services catalog component
+ */
+import React, { useState, useContext, useMemo, useCallback, memo } from 'react';
 import { Building, Server, Code, Briefcase, ArrowRight, Star, CheckCircle, Phone, Calendar } from 'lucide-react';
 import { CurrencyContext } from '../context/CurrencyContext';
 import { DEMO_SERVICES, DEMO_TESTIMONIALS } from '../data/demoServices';
@@ -6,34 +30,36 @@ import BookingModal from './BookingModal';
 import QuoteModal from './QuoteModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
 
-const iconMap = {
-  'Building': Building,
-  'Server': Server,
-  'Code': Code,
-  'Briefcase': Briefcase,
-};
-
-const Services = () => {
+const Services = memo(() => {
   const { currentCurrency } = useContext(CurrencyContext);
   const [selectedService, setSelectedService] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
-  const handleBookNow = (service) => {
+  // Memoized icon mapping to prevent recreation on every render
+  const iconMap = useMemo(() => ({
+    'Building': Building,
+    'Server': Server,
+    'Code': Code,
+    'Briefcase': Briefcase,
+  }), []);
+
+  // Memoized event handlers to prevent recreation on every render
+  const handleBookNow = useCallback((service) => {
     setSelectedService(service);
     setIsBookingModalOpen(true);
-  };
+  }, []);
 
-  const handleRequestQuote = (service) => {
+  const handleRequestQuote = useCallback((service) => {
     setSelectedService(service);
     setIsQuoteModalOpen(true);
-  };
+  }, []);
 
-  const closeModals = () => {
+  const closeModals = useCallback(() => {
     setIsBookingModalOpen(false);
     setIsQuoteModalOpen(false);
     setSelectedService(null);
-  };
+  }, []);
 
   return (
     <>
@@ -233,6 +259,6 @@ const Services = () => {
       />
     </>
   );
-};
+});
 
 export default Services;

@@ -1,3 +1,21 @@
+/**
+ * Footer.jsx - Footer component for CEOTR Ltd ERP Suite
+ *
+ * This component provides the site footer with company information,
+ * navigation links, social media links, and legal page links.
+ * It displays contact information and maintains consistent branding
+ * throughout the application.
+ *
+ * Features:
+ * - Company branding and contact information
+ * - Quick navigation links with smooth scrolling
+ * - Social media integration
+ * - Legal page links (Privacy, Terms, Cookies)
+ * - Responsive layout for all device sizes
+ * - Professional styling with dark theme
+ *
+ * @returns {JSX.Element} The footer component
+ */
 import React from 'react';
 import { COMPANY_INFO } from '../data/demoServices';
 

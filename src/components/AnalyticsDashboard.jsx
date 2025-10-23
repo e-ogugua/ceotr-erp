@@ -1,7 +1,21 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * AnalyticsDashboard.jsx - Real-time analytics component for CEOTR Ltd ERP Suite
+ *
+ * Displays live business metrics with simulated real-time updates.
+ * This component is used in the Services section to show business performance data.
+ *
+ * Performance Optimizations:
+ * - React.memo to prevent unnecessary re-renders when props haven't changed
+ * - useCallback for event handlers to prevent child component re-renders
+ * - useMemo for expensive calculations and derived state
+ * - Controlled update intervals to prevent performance issues
+ *
+ * @returns {JSX.Element} The analytics dashboard component
+ */
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { TrendingUp, Users, Eye, Clock, MessageCircle, Phone } from 'lucide-react';
 
-const AnalyticsDashboard = () => {
+const AnalyticsDashboard = memo(() => {
   const [stats, setStats] = useState({
     visitors: 0,
     pageViews: 0,
@@ -12,8 +26,16 @@ const AnalyticsDashboard = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
 
+  // Memoized initial stats to prevent recreation on every render
+  const initialStats = useMemo(() => ({
+    visitors: 0,
+    pageViews: 0,
+    avgTime: 0,
+    popularService: 'IT Solutions'
+  }), []);
+
   useEffect(() => {
-    // Simulate real-time analytics updates
+    // Simulate real-time analytics updates with controlled intervals
     const interval = setInterval(() => {
       setStats(prev => ({
         visitors: prev.visitors + Math.floor(Math.random() * 3),
@@ -24,19 +46,28 @@ const AnalyticsDashboard = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, []); // Empty dependency array - only run once
 
-  const handleChatSubmit = (e) => {
+  // Memoized chat submit handler to prevent recreation on every render
+  const handleChatSubmit = useCallback((e) => {
     e.preventDefault();
     if (chatMessage.trim()) {
       console.log('Chat message:', chatMessage);
       setChatMessage('');
-      // Simulate response
+      // Simulate response delay
       setTimeout(() => {
         alert('Thank you for your message! Our team will get back to you shortly.');
       }, 1000);
     }
-  };
+  }, [chatMessage]);
+
+  // Memoized formatted stats to prevent recalculation on every render
+  const formattedStats = useMemo(() => ({
+    visitors: stats.visitors.toLocaleString(),
+    pageViews: stats.pageViews.toLocaleString(),
+    avgTime: stats.avgTime.toFixed(1),
+    popularService: stats.popularService
+  }), [stats]);
 
   return (
     <>
@@ -54,7 +85,7 @@ const AnalyticsDashboard = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="text-center">
             <div className="text-2xl font-bold text-primary-400 mb-1">
-              {stats.visitors.toLocaleString()}+
+              {formattedStats.visitors}+
             </div>
             <div className="text-neutral-300 text-sm">Visitors Today</div>
             <div className="flex items-center justify-center gap-1 mt-1">
@@ -65,7 +96,7 @@ const AnalyticsDashboard = () => {
 
           <div className="text-center">
             <div className="text-2xl font-bold text-accent-400 mb-1">
-              {stats.pageViews.toLocaleString()}+
+              {formattedStats.pageViews}+
             </div>
             <div className="text-neutral-300 text-sm">Page Views</div>
             <div className="flex items-center justify-center gap-1 mt-1">
@@ -76,7 +107,7 @@ const AnalyticsDashboard = () => {
 
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-400 mb-1">
-              {stats.avgTime.toFixed(1)}m
+              {formattedStats.avgTime}m
             </div>
             <div className="text-neutral-300 text-sm">Avg. Time</div>
             <div className="flex items-center justify-center gap-1 mt-1">
@@ -87,7 +118,7 @@ const AnalyticsDashboard = () => {
 
           <div className="text-center">
             <div className="text-2xl font-bold text-green-400 mb-1">
-              {stats.popularService}
+              {formattedStats.popularService}
             </div>
             <div className="text-neutral-300 text-sm">Popular Service</div>
             <div className="flex items-center justify-center gap-1 mt-1">
@@ -171,6 +202,6 @@ const AnalyticsDashboard = () => {
       </div>
     </>
   );
-};
+});
 
 export default AnalyticsDashboard;

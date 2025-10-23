@@ -1,53 +1,217 @@
 # Contributing to CEOTR Ltd ERP Suite
 
-## 🤝 Welcome Contributors!
+This document outlines the process for contributing to the CEOTR Ltd ERP Suite, a React-based business management application.
 
-We welcome contributions to the CEOTR Ltd ERP Suite! This document outlines the process for contributing to our enterprise-grade business application.
+## Prerequisites
 
-## 🚀 Quick Start
-
-### Prerequisites
-- **Node.js** 18+ installed
-- **npm** or **yarn** package manager
+- **Node.js** 18+ and npm package manager
 - **Git** for version control
-- **Code editor** (VS Code recommended)
+- **Code editor** (VS Code recommended with ESLint extension)
 
-### Development Setup
-```bash
-# 1. Fork the repository
-git clone https://github.com/your-username/ceotrLtdErpSuite.git
+## Development Setup
 
-# 2. Navigate to project
-cd ceotrLtdErpSuite
+1. **Fork and clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/ceotrLtdErpSuite.git
+   cd ceotrLtdErpSuite
+   ```
 
-# 3. Install dependencies
-npm install
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-# 4. Start development server
-npm run dev
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
 
-# 5. Open http://localhost:3001
+4. **Access the application:**
+   ```
+   http://localhost:3001
+   ```
+
+## Code Standards
+
+### JavaScript/React
+- **ES6+ syntax** with modern React patterns
+- **Functional components** with hooks preferred
+- **PropTypes** for component props validation
+- **Custom hooks** for reusable logic
+- **Error boundaries** for robust error handling
+
+### Styling
+- **TailwindCSS** for responsive utility classes
+- **Mobile-first** responsive design approach
+- **Custom components** in `src/index.css`
+- **Consistent spacing** and typography scale
+
+### File Structure
+```
+src/
+├── components/          # React components by feature
+│   ├── ComponentName.jsx
+│   └── ComponentName.test.jsx
+├── hooks/              # Custom React hooks
+├── utils/              # Utility functions
+├── constants/          # Constants and configuration
+└── types/              # TypeScript definitions (future)
 ```
 
-## 📋 Contribution Process
+### Component Guidelines
+```jsx
+/**
+ * ComponentName - Description of component purpose
+ * @param {string} propName - Description of prop
+ * @returns {JSX.Element} Rendered component
+ */
+const ComponentName = ({ propName }) => {
+  return (
+    <div className="component-name">
+      <h3>{propName}</h3>
+    </div>
+  );
+};
 
-### 1. 🐛 Report Bugs
-Found a bug? Please create an issue with:
-- **Clear title** describing the issue
-- **Steps to reproduce** the problem
-- **Expected behavior** vs actual behavior
+ComponentName.propTypes = {
+  propName: PropTypes.string.isRequired
+};
+
+export default ComponentName;
+```
+
+## Contribution Process
+
+### 1. Report Issues
+Use GitHub Issues to report bugs or request features:
+- **Clear title** describing the issue or request
+- **Detailed description** with steps to reproduce
 - **Environment details** (OS, browser, Node version)
 - **Screenshots** if applicable
 
-### 2. 💡 Suggest Features
-Have an idea for improvement?
-- **Use the Feature Request** issue template
-- **Describe the feature** and its benefits
-- **Provide examples** or mockups if possible
-- **Explain impact** on users and business
+### 2. Submit Code Changes
 
-### 3. 🔧 Submit Code Changes
-Ready to contribute code? Follow these steps:
+#### Create Feature Branch
+```bash
+git checkout -b feature/feature-name
+# or
+git checkout -b fix/issue-description
+```
+
+#### Make Changes
+- Follow the coding standards above
+- Test changes thoroughly
+- Update documentation if needed
+- Ensure no linting errors
+
+#### Commit Changes
+```bash
+git add .
+git commit -m "feat: Add new feature with description
+
+- Implemented X functionality
+- Updated Y component
+- Fixed Z issue"
+```
+
+#### Push and Create Pull Request
+```bash
+git push origin feature/feature-name
+# Create PR via GitHub web interface
+```
+
+### 3. Code Review Process
+- **Functionality** - Does it work as expected?
+- **Code quality** - Clean, readable, maintainable
+- **Performance** - No unnecessary re-renders
+- **Accessibility** - WCAG compliant
+- **Responsive design** - Works on all devices
+- **Error handling** - Graceful failure handling
+- **Testing** - Adequate test coverage
+- **Documentation** - Well documented
+
+## Testing
+
+### Component Testing
+- **React Testing Library** for component tests
+- **Jest** for unit tests
+- **Test coverage** for critical components
+- **Accessibility testing** with axe-core
+
+### Test Structure
+```javascript
+describe('ComponentName', () => {
+  it('renders correctly', () => {
+    render(<ComponentName />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('handles user interaction', () => {
+    render(<ComponentName />);
+    fireEvent.click(screen.getByRole('button'));
+    expect(mockFunction).toHaveBeenCalled();
+  });
+});
+```
+
+## Development Workflow
+
+### Daily Development
+```bash
+# Pull latest changes
+git pull origin master
+
+# Create feature branch
+git checkout -b feature/new-feature
+
+# Make changes and test
+npm run dev
+
+# Run tests
+npm test
+
+# Commit changes
+git add .
+git commit -m "feat: Add new feature"
+
+# Push and create PR
+git push origin feature/new-feature
+```
+
+### Quality Assurance
+```bash
+# Lint code
+npm run lint
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
+
+# Check bundle size
+npm run build:analyze
+```
+
+## Documentation
+
+When adding or modifying components:
+1. **Update this CONTRIBUTING.md** file
+2. **Add JSDoc comments** to component files
+3. **Update README.md** if major changes
+4. **Add PropTypes** for all props
+5. **Include usage examples**
+
+## Support
+
+For technical issues or questions:
+- **GitHub Issues:** Report bugs and request features
+- **Email:** ceotrlimited@gmail.com
+- **Phone:** +234 806 450 8595
+
+---
+
+**CEOTR Ltd ERP Suite — Developed by CEO – Chukwuka Emmanuel Ogugua.**
 
 #### Fork & Clone
 ```bash
@@ -105,7 +269,7 @@ git push origin feature/amazing-new-feature
 # Provide clear description of changes
 ```
 
-## 🎨 Coding Standards
+## Coding Standards
 
 ### JavaScript/React
 - **ES6+ syntax** required
@@ -135,7 +299,7 @@ src/
 
 ### Component Guidelines
 ```jsx
-// ✅ Good component structure
+// Good component structure
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
@@ -172,7 +336,7 @@ MyComponent.propTypes = {
 export default MyComponent;
 ```
 
-## 🧪 Testing Requirements
+## Testing Requirements
 
 ### Component Testing
 - **React Testing Library** for component tests
@@ -206,7 +370,7 @@ describe('MyComponent', () => {
 });
 ```
 
-## 📝 Documentation Requirements
+## Documentation Requirements
 
 ### Code Documentation
 - **JSDoc comments** for functions and components
@@ -226,17 +390,17 @@ describe('MyComponent', () => {
  */
 ```
 
-## 🔍 Code Review Process
+## Code Review Process
 
 ### What We Look For
-- ✅ **Functionality** - Does it work as expected?
-- ✅ **Code quality** - Clean, readable, maintainable
-- ✅ **Performance** - No unnecessary re-renders
-- ✅ **Accessibility** - WCAG compliant
-- ✅ **Responsive design** - Works on all devices
-- ✅ **Error handling** - Graceful failure handling
-- ✅ **Testing** - Adequate test coverage
-- ✅ **Documentation** - Well documented
+- **Functionality** - Does it work as expected?
+- **Code quality** - Clean, readable, maintainable
+- **Performance** - No unnecessary re-renders
+- **Accessibility** - WCAG compliant
+- **Responsive design** - Works on all devices
+- **Error handling** - Graceful failure handling
+- **Testing** - Adequate test coverage
+- **Documentation** - Well documented
 
 ### Review Checklist
 - [ ] **Code style** follows project conventions
@@ -248,7 +412,7 @@ describe('MyComponent', () => {
 - [ ] **Documentation** updated
 - [ ] **No breaking changes** to existing API
 
-## 🚀 Development Workflow
+## Development Workflow
 
 ### Daily Development
 ```bash
@@ -287,7 +451,7 @@ npm run build
 npm run analyze
 ```
 
-## 📋 Pull Request Requirements
+## Pull Request Requirements
 
 ### PR Title Format
 ```
@@ -323,7 +487,7 @@ Closes #123
 References #456
 ```
 
-## 🔧 Development Tools
+## Development Tools
 
 ### Required Tools
 - **Node.js** 18+
@@ -343,7 +507,7 @@ References #456
 - **React Testing Library** - Component testing
 - **Cypress** (optional) - E2E testing
 
-## 📞 Getting Help
+## Getting Help
 
 ### Community Support
 - **GitHub Issues** - Bug reports and feature requests
@@ -355,14 +519,14 @@ References #456
 - **Phone:** +234 806 450 8595
 - **Response Time:** 24-48 hours
 
-## 🎉 Recognition
+## Recognition
 
 ### Contribution Levels
-- **⭐ Contributor** - Submitted first PR
-- **⭐⭐ Bronze** - 5+ PRs merged
-- **⭐⭐⭐ Silver** - 10+ PRs merged
-- **⭐⭐⭐⭐ Gold** - 20+ PRs merged
-- **💎 Platinum** - Major feature contributions
+- **Contributor** - Submitted first PR
+- **Bronze** - 5+ PRs merged
+- **Silver** - 10+ PRs merged
+- **Gold** - 20+ PRs merged
+- **Platinum** - Major feature contributions
 
 ### Hall of Fame
 Contributors will be recognized in:
@@ -371,12 +535,10 @@ Contributors will be recognized in:
 - Project documentation
 - Special mentions in updates
 
-## 📄 License
+## License
 
 By contributing to this project, you agree that your contributions will be licensed under the same license as the original project.
 
 ---
 
-**Contributing Guide Version:** 2.0.0 | Last Updated: January 2025
-
-Thank you for contributing to CEOTR Ltd ERP Suite! 🚀
+**CEOTR Ltd ERP Suite — Developed by CEO – Chukwuka Emmanuel Ogugua.**

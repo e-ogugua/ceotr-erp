@@ -1,3 +1,20 @@
+/**
+ * Contact.jsx - Contact form and information component for CEOTR Ltd ERP Suite
+ *
+ * This component provides contact information, a professional contact form,
+ * and integration with the backend API for message submission. It displays
+ * company contact details and handles form validation and submission.
+ *
+ * Features:
+ * - Professional contact form with validation
+ * - Company contact information display
+ * - Social media links integration
+ * - Success and error state handling
+ * - Responsive layout for all devices
+ * - Integration with mock API for form submission
+ *
+ * @returns {JSX.Element} The contact section component
+ */
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import { COMPANY_INFO } from '../data/demoServices';
@@ -188,7 +205,7 @@ const Contact = () => {
                     </svg>
                   </div>
                   <h4 className="text-xl font-semibold text-neutral-900 mb-2">
-                    Message Sent Successfully!
+                    Message Sent Successfully
                   </h4>
                   <p className="text-neutral-600 mb-4">
                     Thank you for contacting us. We've received your message and will get back to you within 24 hours.

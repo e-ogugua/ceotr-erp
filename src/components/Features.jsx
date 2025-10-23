@@ -1,3 +1,19 @@
+/**
+ * Features.jsx - Company features showcase component for CEOTR Ltd ERP Suite
+ *
+ * This component displays the key features and capabilities of CEOTR Ltd
+ * in a professional grid layout. It highlights the company's strengths
+ * and provides call-to-action buttons for further engagement.
+ *
+ * Features:
+ * - Professional feature cards with icons and descriptions
+ * - Responsive grid layout for all device sizes
+ * - Company statistics and metrics display
+ * - Call-to-action section with navigation buttons
+ * - Consistent styling with the overall design system
+ *
+ * @returns {JSX.Element} The features showcase component
+ */
 import React from 'react';
 import { Zap, Shield, Users, Lightbulb, TrendingUp, Globe, ArrowRight, Star, Target, Award } from 'lucide-react';
 

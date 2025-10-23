@@ -8,6 +8,36 @@
   html {
     font-family: 'Inter', system-ui, sans-serif;
   }
+
+  /* Accessibility: Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .animate-float,
+    .animate-float-delayed,
+    .animate-pulse-glow,
+    .animate-slide-in,
+    .animate-fade-in-up {
+      animation: none !important;
+    }
+
+    .hover-lift,
+    .hover-glow,
+    .logo-enhanced,
+    .portfolio-image:hover,
+    .enhanced-card:hover,
+    .feature-card:hover {
+      transform: none !important;
+      transition: none !important;
+    }
+  }
 }
 
 @layer components {
@@ -103,7 +133,7 @@
     @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
   }
 
-  /* Advanced Animations */
+  /* Advanced Animations - Respects motion preferences */
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
@@ -124,41 +154,24 @@
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
   }
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  .animate-float-delayed {
-    animation: float-delayed 3s ease-in-out infinite;
-  }
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  .animate-slide-in {
-    animation: slide-in 0.8s ease-out;
-  }
-  .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out;
-  }
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
-    50% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.6); }
-  }
-  @keyframes slide-in {
-    from { transform: translateX(-100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
 
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  .animate-float-delayed {
-    animation: float-delayed 3s ease-in-out infinite 1.5s;
-  }
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  .animate-slide-in {
-    animation: slide-in 0.5s ease-out;
+  /* Animation classes that respect motion preferences */
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    .animate-float-delayed {
+      animation: float-delayed 3s ease-in-out infinite 1.5s;
+    }
+    .animate-pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .animate-slide-in {
+      animation: slide-in 0.8s ease-out;
+    }
+    .animate-fade-in-up {
+      animation: fade-in-up 0.6s ease-out;
+    }
   }
 
   /* Enhanced Button Styles */
@@ -233,7 +246,7 @@
     @apply bg-neutral-200 animate-pulse;
   }
 
-  /* Typography Enhancements */
+  /* Typography Enhancements - Improved contrast and rhythm */
   .text-shadow {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
@@ -251,7 +264,7 @@
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
   }
 
-  /* Interactive Elements */
+  /* Interactive Elements with accessibility improvements */
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
   }
@@ -277,5 +290,39 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Focus management for better accessibility */
+  .focus-visible:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-500;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .btn-primary,
+    .btn-secondary,
+    .btn-glass,
+    .btn-outline {
+      @apply border-2 border-solid;
+    }
+
+    .text-gradient {
+      @apply text-primary-600;
+    }
+
+    .glass-effect {
+      @apply border border-neutral-300;
+    }
+  }
+
+  /* Reduced motion support (already handled above) */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-float-delayed,
+    .animate-pulse-glow,
+    .animate-slide-in,
+    .animate-fade-in-up {
+      animation: none !important;
+    }
   }
 }

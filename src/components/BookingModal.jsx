@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { X, Calendar } from 'lucide-react';
 import { CurrencyContext } from '../context/CurrencyContext';
 
@@ -88,17 +89,18 @@ const BookingModal = ({ isOpen, onClose, service }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={handleClose} onKeyDown={(e) => { if (e.key === 'Escape') handleClose(); }} tabIndex={0} role="button" aria-label="Close booking modal">
+      <div className="modal-content" onClick={e => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Escape') handleClose(); }} tabIndex={0} role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-neutral-900">
+            <h2 className="text-2xl font-bold text-neutral-900" id="booking-modal-title">
               Book {service?.title}
             </h2>
             <button
               onClick={handleClose}
               className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
               disabled={isSubmitting}
+              aria-label="Close booking modal"
             >
               <X size={24} />
             </button>
@@ -265,6 +267,15 @@ const BookingModal = ({ isOpen, onClose, service }) => {
       </div>
     </div>
   );
+};
+
+BookingModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  service: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  }).isRequired
 };
 
 export default BookingModal;

@@ -104,7 +104,7 @@ export default async function handler(req, res) {
   try {
     console.log('Quote form submission received');
 
-    const { name, email, phone, budgetMin, budgetMax, projectDetails, currency, service, serviceId, timestamp } = req.body;
+    const { name, email, phone, budgetMin, budgetMax, projectDetails, currency, service, timestamp } = req.body;
 
     if (!name || !email || !service) {
       return res.status(400).json({
@@ -154,4 +154,4 @@ export default async function handler(req, res) {
     console.error('Quote API Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-};
+}

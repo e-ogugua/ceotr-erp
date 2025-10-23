@@ -2,20 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Performance Optimizations -->
+    <link rel="preload" href="/src/main.jsx" as="script" crossorigin />
+    <link rel="preload" href="/src/index.css" as="style" />
+    <link rel="preload" href="/images/logo/ceotr-logo-white.png" as="image" type="image/png" />
+
+    <!-- Favicon and icons with optimized loading -->
     <link rel="icon" type="image/png" href="/images/logo/ceotr-logo-white.png" />
     <link rel="icon" type="image/svg+xml" href="/images/logo/ceotr-logo.svg" />
+    <link rel="apple-touch-icon" href="/images/logo/ceotr-logo-white.png" />
+
+    <!-- Viewport and responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="CEO Transnational Resources Limited (CEOTR Ltd) - Professional services including general contracting, IT solutions, business consulting, and software development. Discover Excellence!" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="CEO Transnational Resources Limited (CEOTR Ltd) - Professional services including general contracting, IT solutions, business consulting, and software development. Discover Excellence." />
     <meta name="keywords" content="CEOTR Ltd, CEO Transnational Resources Limited, construction, IT services, business consulting, software development, contracting, business management, Enugu Nigeria" />
-    <meta name="author" content="CEOTR Ltd" />
+    <meta name="author" content="CEO – Chukwuka Emmanuel Ogugua" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#2563eb" />
+
+    <!-- Open Graph tags for social media -->
     <meta property="og:title" content="CEOTR Ltd - CEO Transnational Resources Limited" />
     <meta property="og:description" content="Professional services for construction, IT solutions, business consulting, and software development in Nigeria." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ceotr.com" />
+    <meta property="og:image" content="/images/logo/ceotr-logo-white.png" />
+    <meta property="og:site_name" content="CEOTR Ltd" />
+
+    <!-- Twitter Card tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="CEOTR Ltd - CEO Transnational Resources Limited" />
     <meta name="twitter:description" content="Professional services for construction, IT solutions, business consulting, and software development in Nigeria." />
-    <title>CEOTR Ltd - CEO Transnational Resources Limited – Discover Excellence!</title>
+    <meta name="twitter:image" content="/images/logo/ceotr-logo-white.png" />
+
+    <!-- Performance and security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+
+    <!-- Page title without exclamation mark -->
+    <title>CEOTR Ltd - CEO Transnational Resources Limited – Discover Excellence</title>
   </head>
   <body>
     <div id="root"></div>

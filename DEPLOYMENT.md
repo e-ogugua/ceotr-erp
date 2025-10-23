@@ -1,33 +1,120 @@
 # CEOTR Ltd ERP Suite - Deployment Guide
 
-## 🚀 Deployment Overview
+This guide covers deployment options for the CEOTR Ltd ERP Suite React application.
 
-The CEOTR Ltd ERP Suite is designed for seamless deployment across multiple platforms with automatic deployment capabilities through Vercel and GitHub integration.
+## Deployment Platforms
 
-## 📋 Deployment Options
+### 1. Vercel (Recommended)
+**Configuration:** Automatic deployment from GitHub repository
+**Build Settings:** Output directory set to `dist/`
+**Environment Variables:** Configurable through Vercel dashboard
 
-### 1. 🚀 Vercel (Recommended)
-**Best for:** Production deployment with automatic updates
-**URL:** `https://ceotr-ltd-erp-suite.vercel.app`
+**Setup Steps:**
+1. Connect GitHub repository to Vercel account
+2. Configure build settings in `vercel.json`
+3. Set environment variables in Vercel dashboard
+4. Enable automatic deployments on push to master branch
 
-### 2. 🖥️ Local Development
-**Best for:** Development and testing
-**URL:** `http://localhost:3001`
+**Production URL:** `https://ceotr-ltd-erp-suite.vercel.app`
 
-### 3. 🐳 Docker
-**Best for:** Self-hosted deployments
-**Setup:** Custom Docker configuration
+### 2. Local Development
+**Port:** 3001 (development server)
+**Build Command:** `npm run dev`
+**Access:** `http://localhost:3001`
 
-### 4. 📦 Static Hosting
-**Best for:** Simple hosting solutions
-**Files:** Upload `dist/` folder contents
+### 3. Static Hosting
+**Build Output:** `dist/` folder
+**Upload Method:** FTP or hosting provider file manager
+**Requirements:** Static file hosting service
 
-## 🔧 Vercel Deployment (Recommended)
+### 4. Docker Deployment
+**Containerization:** Custom Dockerfile for Node.js application
+**Runtime:** Node.js 18+ with npm
+**Configuration:** Environment variables via `.env` file
 
-### Prerequisites
-- **GitHub Account** with repository access
-- **Vercel Account** (free tier available)
-- **Project repository** connected to GitHub
+## Build Process
+
+### Development Build
+```bash
+npm run dev
+# Starts Vite development server with hot reload
+```
+
+### Production Build
+```bash
+npm run build
+# Generates optimized files in dist/ folder
+```
+
+### Preview Build
+```bash
+npm run preview
+# Preview production build locally
+```
+
+## Environment Configuration
+
+### Required Variables (Production)
+```
+SMTP_HOST=your-smtp-host
+SMTP_PORT=587
+SMTP_USER=your-email@domain.com
+SMTP_PASS=your-app-password
+ORDER_EMAIL_FROM=your-email@domain.com
+ORDER_NOTIFICATIONS_EMAIL=notifications@your-domain.com
+```
+
+### Optional Variables (Development)
+```
+NODE_ENV=development
+VITE_API_URL=http://localhost:3001/api
+```
+
+## API Integration
+
+### Development API
+**Server:** Express.js mock API server
+**Port:** 3001 (same as frontend)
+**Endpoints:** RESTful API routes in `server.js`
+
+### Production API
+**Configuration:** Proxy settings in hosting platform
+**CORS:** Enabled for frontend domain
+**Rate Limiting:** Configurable through hosting platform
+
+## Deployment Checklist
+
+### Pre-Deployment
+- [ ] Run `npm run build` successfully
+- [ ] Test all features in preview mode
+- [ ] Configure environment variables
+- [ ] Set up domain and SSL certificate
+- [ ] Configure monitoring and error tracking
+
+### Post-Deployment
+- [ ] Verify all pages load correctly
+- [ ] Test contact forms and API endpoints
+- [ ] Check responsive design on mobile devices
+- [ ] Verify image loading and fallbacks
+- [ ] Test accessibility features
+- [ ] Monitor performance metrics
+
+## Troubleshooting
+
+### Common Issues
+**Build Failures:** Check Node.js version and dependencies
+**API Errors:** Verify environment variables and CORS settings
+**Image Loading:** Confirm image paths and fallbacks
+**Performance:** Check bundle size and optimize assets
+
+### Support
+- **GitHub Issues:** Report deployment problems
+- **Email:** ceotrlimited@gmail.com
+- **Documentation:** Check this guide and related docs
+
+---
+
+**CEOTR Ltd ERP Suite — Developed by CEO – Chukwuka Emmanuel Ogugua.**
 
 ### Automatic Deployment Setup
 
@@ -66,15 +153,15 @@ git push origin master
 ```
 
 ### Vercel Features
-- ✅ **Automatic deployments** on every push
-- ✅ **Global CDN** distribution
-- ✅ **SSL certificate** automatic
-- ✅ **Preview deployments** for branches
-- ✅ **Environment variables** management
-- ✅ **Custom domains** support
-- ✅ **Analytics** and monitoring
+- **Automatic deployments** on every push
+- **Global CDN** distribution
+- **SSL certificate** automatic
+- **Preview deployments** for branches
+- **Environment variables** management
+- **Custom domains** support
+- **Analytics** and monitoring
 
-## 🖥️ Local Development Deployment
+## Local Development Deployment
 
 ### Development Server
 ```bash
@@ -105,7 +192,7 @@ npm run server
 npm run dev:full
 ```
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Dockerfile Setup
 ```dockerfile
@@ -138,7 +225,7 @@ docker run -p 3001:80 ceotr-erp-suite
 # Access at: http://localhost:3001
 ```
 
-## 📦 Static Hosting Deployment
+## Static Hosting Deployment
 
 ### Build Files
 ```bash
@@ -166,7 +253,7 @@ dist/
 └── package.json        # Dependencies
 ```
 
-## 🔧 Environment Configuration
+## Environment Configuration
 
 ### Development Environment
 ```bash
@@ -188,7 +275,7 @@ VERCEL_URL=https://ceotr-ltd-erp-suite.vercel.app
 2. **Local Development:** Create `.env.local` file
 3. **Production:** Set in deployment platform
 
-## 📊 Deployment Monitoring
+## Deployment Monitoring
 
 ### Vercel Analytics
 - **Real-time metrics** dashboard
@@ -211,7 +298,7 @@ curl https://ceotr-ltd-erp-suite.vercel.app/api/health
 - **Load time** optimization
 - **Bundle size** analysis
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Deployment Issues
 
@@ -266,7 +353,7 @@ vercel env ls
 vercel --prod
 ```
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 ### GitHub Actions (Optional)
 ```yaml
@@ -295,7 +382,7 @@ jobs:
 Git Push → GitHub → Vercel Detection → Build → Deploy → Live
 ```
 
-## 📈 Performance Optimization
+## Performance Optimization
 
 ### Build Optimization
 ```bash
@@ -315,21 +402,21 @@ npm run build -- --analyze
 - **Image optimization** with format conversion
 - **Automatic SSL** certificate management
 
-## 🔒 Security Considerations
+## Security Considerations
 
 ### Production Security
-- ✅ **HTTPS only** (automatic SSL)
-- ✅ **Environment variables** encrypted
-- ✅ **API keys** secured
-- ✅ **CORS** properly configured
-- ✅ **CSP headers** for XSS protection
+- **HTTPS only** (automatic SSL)
+- **Environment variables** encrypted
+- **API keys** secured
+- **CORS** properly configured
+- **CSP headers** for XSS protection
 
 ### Access Control
 - **Public pages:** Portfolio, Services, About
 - **Protected routes:** Admin dashboard (future)
 - **API endpoints:** Rate limiting and authentication
 
-## 🚀 Production Checklist
+## Production Checklist
 
 ### Pre-Deployment
 - [ ] **Test build locally** (`npm run build`)
@@ -352,7 +439,7 @@ npm run build -- --analyze
 - [ ] **Test mobile** responsiveness
 - [ ] **Verify SSL** certificate
 
-## 📞 Support & Monitoring
+## Support & Monitoring
 
 ### Monitoring Tools
 - **Vercel Dashboard** - Deployment monitoring
@@ -367,4 +454,4 @@ npm run build -- --analyze
 
 ---
 
-**Deployment Guide Version:** 2.0.0 | Last Updated: January 2025
+**CEOTR Ltd ERP Suite — Developed by CEO – Chukwuka Emmanuel Ogugua.**

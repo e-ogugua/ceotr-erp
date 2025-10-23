@@ -1,49 +1,71 @@
-import React, { useState } from 'react';
+/**
+ * Portfolio.jsx - Project portfolio component for CEOTR Ltd ERP Suite
+ *
+ * This component displays the company's project portfolio with interactive galleries,
+ * category filtering, and lightbox functionality. It showcases completed projects
+ * with detailed information and visual galleries for each project.
+ *
+ * Features:
+ * - Interactive project gallery with lightbox modal
+ * - Category filtering system (Construction, IT, Software, Business)
+ * - Responsive grid layout for all device sizes
+ * - Image fallback system for HEIC/WebP compatibility
+ * - Optimized lightbox state management
+ *
+ * @returns {JSX.Element} The portfolio showcase component
+ */
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { ExternalLink, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DEMO_PROJECTS } from '../data/demoServices';
 
-const Portfolio = () => {
+const Portfolio = memo(() => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const categories = [
+  // Memoized categories array to prevent recreation on every render
+  const categories = useMemo(() => [
     { id: 'all', label: 'All Projects' },
     { id: 'construction', label: 'Construction' },
     { id: 'business-development', label: 'Business Development' },
     { id: 'software', label: 'Software' },
     { id: 'it', label: 'IT Services' }
-  ];
+  ], []);
 
-  const filteredProjects = selectedCategory === 'all'
-    ? DEMO_PROJECTS
-    : DEMO_PROJECTS.filter(project => project.type === selectedCategory);
+  // Memoized filtered projects to prevent recalculation on every render
+  const filteredProjects = useMemo(() => {
+    return selectedCategory === 'all'
+      ? DEMO_PROJECTS
+      : DEMO_PROJECTS.filter(project => project.type === selectedCategory);
+  }, [selectedCategory]);
 
-  const openLightbox = (project, imageIndex) => {
+  // Memoized lightbox handlers to prevent recreation on every render
+  const openLightbox = useCallback((project, imageIndex) => {
     setSelectedProject(project);
     setCurrentImageIndex(imageIndex);
-  };
+  }, []);
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setSelectedProject(null);
     setCurrentImageIndex(0);
-  };
+  }, []);
 
-  const nextImage = () => {
+  // Memoized image navigation handlers
+  const nextImage = useCallback(() => {
     if (selectedProject) {
       setCurrentImageIndex((prev) =>
         prev === selectedProject.gallery.length - 1 ? 0 : prev + 1
       );
     }
-  };
+  }, [selectedProject]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (selectedProject) {
       setCurrentImageIndex((prev) =>
         prev === 0 ? selectedProject.gallery.length - 1 : prev - 1
       );
     }
-  };
+  }, [selectedProject]);
 
   return (
     <section id="portfolio" className="py-16 md:py-24 bg-white">
@@ -87,6 +109,15 @@ const Portfolio = () => {
                     alt={project.title}
                     className="w-full h-full object-cover cursor-pointer"
                     onClick={() => openLightbox(project, 0)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openLightbox(project, 0);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`Open lightbox for ${project.title}`}
                     onError={(e) => {
                       // Try WebP fallback for HEIC images
                       if (project.image.includes('.HEIC') && !e.target.src.includes('.webp')) {
@@ -107,6 +138,15 @@ const Portfolio = () => {
                           key={index}
                           className="w-12 h-12 bg-neutral-200 rounded cursor-pointer flex-shrink-0"
                           onClick={() => openLightbox(project, index)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              openLightbox(project, index);
+                            }
+                          }}
+                          tabIndex={0}
+                          role="button"
+                          aria-label={`Open lightbox for ${project.title} image ${index + 1}`}
                         >
                           <img
                             src={image}
@@ -259,6 +299,6 @@ const Portfolio = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Portfolio;
