@@ -296,8 +296,11 @@ QuoteModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   service: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
-  }).isRequired
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    priceRanges: PropTypes.object,
+    features: PropTypes.array
+  })
 };
 
 export default QuoteModal;

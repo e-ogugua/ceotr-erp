@@ -105,9 +105,7 @@ export const DEMO_PROJECTS = [
       '/images/portfolio/rokaProject-delivery.webp',
       '/images/portfolio/rokaTableWater.webp',
       '/images/portfolio/roka1.webp',
-      '/images/portfolio/roka.webp',
-      '/images/portfolio/rokaProject-delivery.HEIC',
-      '/images/portfolio/rokaTableWater.HEIC'
+      '/images/portfolio/roka.webp'
     ],
     technologies: ['Branding', 'Supply Chain Management', 'Business Systems'],
     completionDate: '2025',
@@ -121,9 +119,7 @@ export const DEMO_PROJECTS = [
     image: '/images/portfolio/rokafarm.JPG',
     gallery: [
       '/images/portfolio/poshpoulefarms.webp',
-      '/images/portfolio/poshpoulefarm2.webp',
-      '/images/portfolio/poshpoulefarms.HEIC',
-      '/images/portfolio/poshpoulefarm2.HEIC'
+      '/images/portfolio/poshpoulefarm2.webp'
     ],
     technologies: ['AgriTech', 'Organic Systems', 'Farm Management Software'],
     completionDate: '2019',
@@ -152,9 +148,7 @@ export const DEMO_PROJECTS = [
     image: '/images/portfolio/JesusPowerArenaProject.PNG',
     gallery: [
       '/images/portfolio/JesusPowerArena.webp',
-      '/images/portfolio/JepliggomProject.webp',
-      '/images/portfolio/JesusPowerArena.HEIC',
-      '/images/portfolio/JepliggomProject.HEIC'
+      '/images/portfolio/JepliggomProject.webp'
     ],
     technologies: ['Modern Architecture', 'Sustainable Building', 'Community Facilities'],
     completionDate: '2023',
@@ -167,8 +161,7 @@ export const DEMO_PROJECTS = [
     description: 'Implemented modern farming technology and sustainable practices for an organic farm operation.',
     image: '/images/portfolio/organicFarm.webp',
     gallery: [
-      '/images/portfolio/organicFarm.webp',
-      '/images/portfolio/organicFarm.HEIC'
+      '/images/portfolio/organicFarm.webp'
     ],
     technologies: ['AgriTech', 'Sustainable Farming', 'IoT Monitoring'],
     completionDate: '2024',
@@ -267,7 +260,7 @@ export const COMPANY_INFO = {
   founded: '2015',
   headquarters: 'Enugu, Nigeria',
   phone: ['+234 806 450 8595', '+234 806 900 9116'],
-  email: ['ceotrlimited@gmail.com', 'ceotrlimited@gmail.com'],
+  email: ['ceotrlimited@gmail.com'],
   businessHours: 'Mon–Fri, 9:00 AM – 6:00 PM',
   socialLinks: {
     linkedin: 'https://linkedin.com/company/ceotr',
