@@ -48,47 +48,6 @@ const LoadingSpinner = () => (
 )
 
 function App() {
-  // Check if we're on a specific page route
-  const path = window.location.pathname;
-
-  // If on specific pages, render only that component with error boundary
-  if (path === '/privacy-policy') {
-    return (
-      <ErrorBoundary>
-        <CurrencyProvider>
-          <Suspense fallback={<LoadingSpinner />}>
-            <PrivacyPolicy />
-          </Suspense>
-        </CurrencyProvider>
-      </ErrorBoundary>
-    );
-  }
-
-  if (path === '/terms-of-service') {
-    return (
-      <ErrorBoundary>
-        <CurrencyProvider>
-          <Suspense fallback={<LoadingSpinner />}>
-            <TermsOfService />
-          </Suspense>
-        </CurrencyProvider>
-      </ErrorBoundary>
-    );
-  }
-
-  if (path === '/cookie-policy') {
-    return (
-      <ErrorBoundary>
-        <CurrencyProvider>
-          <Suspense fallback={<LoadingSpinner />}>
-            <CookiePolicy />
-          </Suspense>
-        </CurrencyProvider>
-      </ErrorBoundary>
-    );
-  }
-
-  // Default: render the full homepage with error boundary
   return (
     <ErrorBoundary>
       <CurrencyProvider>
@@ -112,6 +71,9 @@ function App() {
             <Route path="/leads" element={<Leads />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
           </Routes>
         </Suspense>
       </CurrencyProvider>
