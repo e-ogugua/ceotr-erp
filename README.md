@@ -207,6 +207,21 @@ For technical issues or questions:
 - **Phone:** +234 806 450 8595
 - **GitHub Issues:** Report bugs and request features
 
----
+## Screenshots
+Add a hero screenshot here for quick visual context.
+![Hero Screenshot](./public/screenshot-hero.png)
 
+## Roadmap
+Track progress and upcoming work in the Roadmap:
+https://github.com/e-ogugua/ceotr-erp/issues?q=is%3Aissue+Roadmap
+
+## Ecosystem Links
+- EmmanuelOS: https://github.com/e-ogugua/emmanuelos
+- Portfolio Hub: https://ceodev.vercel.app/
+
+## Links
+- Releases: https://github.com/e-ogugua/ceotr-erp/releases
+- Security Policy: ./SECURITY.md
+
+---
 **CEOTR Ltd ERP Suite — Developed by CEO – Chukwuka Emmanuel Ogugua.**
